@@ -450,46 +450,51 @@
             </h2>
           </div>
 
-          <!-- Slider mock -->
-          <div class="mt-6 compare-slider" id="slider">
-            <!-- Before image (placeholder gradient — в проде там реальное фото) -->
-            <div class="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-400 flex items-center justify-center">
-              <div class="text-center">
-                <div class="text-7xl mb-3">🧍‍♀️</div>
-                <div class="text-gray-700 font-semibold">Сегодня</div>
-                <div class="text-xs text-gray-600 mt-1">12 мая</div>
-              </div>
-            </div>
-            <!-- After image -->
-            <div class="compare-after bg-gradient-to-br from-rose-100 to-pink-200 flex items-center justify-center" id="afterImg">
-              <div class="text-center">
-                <div class="text-7xl mb-3">💃</div>
-                <div class="text-rose-900 font-semibold">Через 8 недель</div>
-                <div class="text-xs text-rose-700 mt-1">7 июля</div>
-              </div>
-            </div>
+          <!-- Real before/after slider — реальные участницы «Перезагрузки» -->
+          <div class="mt-6 compare-slider relative" id="slider" style="aspect-ratio: 1/1;">
+            <!-- BEFORE = левая половина склейки -->
+            <div class="absolute inset-0" id="beforeImg" style="background: url('https://perezagruzka.vtonuse.info/wp-content/gallery/doiposle/EmGdubIxx0U.jpg') left center / 200% 100% no-repeat;"></div>
+            <!-- AFTER = правая половина той же склейки -->
+            <div class="compare-after absolute inset-0" id="afterImg" style="background: url('https://perezagruzka.vtonuse.info/wp-content/gallery/doiposle/EmGdubIxx0U.jpg') right center / 200% 100% no-repeat;"></div>
+            <!-- Badges -->
+            <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/60 text-white text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm">До</div>
+            <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-rose-500/90 text-white text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm">После</div>
+            <!-- Handle -->
             <div class="slider-handle" id="handle"></div>
           </div>
 
-          <!-- Numbers -->
-          <div class="mt-6 grid grid-cols-3 gap-2">
-            <div class="p-3 rounded-xl bg-rose-50 text-center">
-              <div class="text-2xl font-bold text-rose-600 tabular">−4.5</div>
-              <div class="text-xs text-rose-700 mt-1">см талия</div>
-            </div>
-            <div class="p-3 rounded-xl bg-green-50 text-center">
-              <div class="text-2xl font-bold text-green-600 tabular">−3%</div>
-              <div class="text-xs text-green-700 mt-1">жир</div>
-            </div>
-            <div class="p-3 rounded-xl bg-purple-50 text-center">
-              <div class="text-2xl font-bold text-purple-600 tabular">−4</div>
-              <div class="text-xs text-purple-700 mt-1">био-возраст</div>
+          <!-- Pair navigation -->
+          <div class="mt-3 flex items-center justify-center gap-1.5" id="pair-nav">
+            <button class="w-8 h-1.5 rounded-full bg-rose-500 cursor-pointer transition-all" data-pair="0"></button>
+            <button class="w-2 h-1.5 rounded-full bg-gray-300 cursor-pointer transition-all" data-pair="1"></button>
+            <button class="w-2 h-1.5 rounded-full bg-gray-300 cursor-pointer transition-all" data-pair="2"></button>
+            <button class="w-2 h-1.5 rounded-full bg-gray-300 cursor-pointer transition-all" data-pair="3"></button>
+            <button class="w-2 h-1.5 rounded-full bg-gray-300 cursor-pointer transition-all" data-pair="4"></button>
+          </div>
+          <div class="mt-2 text-center text-sm font-bold text-rose-700 tabular" id="pair-label">−20.5 кг · −52 см · 8 недель</div>
+          <div class="mt-0.5 text-center text-[10px] text-gray-500 italic">Реальные результаты участниц «Перезагрузки»</div>
+
+          <!-- Cohort prognosis -->
+          <div class="mt-5 p-3 rounded-2xl bg-rose-50 border border-rose-100">
+            <div class="text-[10px] font-bold text-rose-700 uppercase tracking-wider text-center mb-2">Ваш прогноз · по 47 клиенткам</div>
+            <div class="grid grid-cols-3 gap-2">
+              <div class="text-center">
+                <div class="text-xl font-bold text-rose-700 tabular">−4.5</div>
+                <div class="text-[10px] text-rose-600 mt-0.5">см талия</div>
+              </div>
+              <div class="text-center">
+                <div class="text-xl font-bold text-rose-700 tabular">−3%</div>
+                <div class="text-[10px] text-rose-600 mt-0.5">жир</div>
+              </div>
+              <div class="text-center">
+                <div class="text-xl font-bold text-rose-700 tabular">−4</div>
+                <div class="text-[10px] text-rose-600 mt-0.5">био-возраст</div>
+              </div>
             </div>
           </div>
 
-          <!-- Note -->
-          <div class="mt-5 text-xs text-gray-500 italic leading-relaxed text-center px-4">
-            Прогноз построен на 47 клиентках Aquatonus с похожими параметрами. Фактический результат может отличаться ±15%.
+          <div class="mt-3 text-[10px] text-gray-500 italic leading-relaxed text-center px-2">
+            Фактический результат зависит от соблюдения программы. Возможна вариация ±15%.
           </div>
 
           <button class="w-full mt-6 py-4 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold text-lg shadow-lg shadow-rose-500/30">
@@ -1056,6 +1061,38 @@
     slider.addEventListener('touchstart', (e) => { isDragging = true; updateSlider(e.touches[0].clientX); });
     document.addEventListener('touchmove', (e) => { if (isDragging) updateSlider(e.touches[0].clientX); });
     document.addEventListener('touchend', () => isDragging = false);
+
+    // ──── Pair navigation (5 реальных пар «до/после» с perezagruzka.vtonuse.info) ────
+    const pairs = [
+      { url: 'https://perezagruzka.vtonuse.info/wp-content/gallery/doiposle/EmGdubIxx0U.jpg', label: '−20.5 кг · −52 см · 8 недель' },
+      { url: 'https://perezagruzka.vtonuse.info/wp-content/gallery/doiposle/7TbHdpuRvaQ.jpg', label: '−9.3 кг · −28 см · 8 недель' },
+      { url: 'https://perezagruzka.vtonuse.info/wp-content/gallery/doiposle/Ausn3XX16fg.jpg', label: '2.1 сезон · уменьшение бёдер и талии' },
+      { url: 'https://perezagruzka.vtonuse.info/wp-content/gallery/doiposle/5cSGv8SrBno.jpg', label: '1.7 сезон · работа со всем телом' },
+      { url: 'https://perezagruzka.vtonuse.info/wp-content/gallery/doiposle/91lOcPVAOvk.jpg', label: 'Спина · уменьшение объёмов' },
+    ];
+
+    document.querySelectorAll('#pair-nav button').forEach((btn, idx) => {
+      btn.addEventListener('click', () => {
+        const pair = pairs[idx];
+        const beforeEl = document.getElementById('beforeImg');
+        const afterEl = document.getElementById('afterImg');
+        const labelEl = document.getElementById('pair-label');
+        if (beforeEl) beforeEl.style.backgroundImage = `url('${pair.url}')`;
+        if (afterEl) afterEl.style.backgroundImage = `url('${pair.url}')`;
+        if (labelEl) labelEl.textContent = pair.label;
+        // Update active dot styling
+        document.querySelectorAll('#pair-nav button').forEach((b, i) => {
+          b.className = i === idx
+            ? 'w-8 h-1.5 rounded-full bg-rose-500 cursor-pointer transition-all'
+            : 'w-2 h-1.5 rounded-full bg-gray-300 cursor-pointer transition-all';
+        });
+        // Reset slider to 50%
+        if (handle && afterEl) {
+          handle.style.left = '50%';
+          afterEl.style.clipPath = 'inset(0 0 0 50%)';
+        }
+      });
+    });
 
     // ──── ROI Calculator ────
     function formatRub(num) {
