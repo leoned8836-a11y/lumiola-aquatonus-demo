@@ -1032,22 +1032,186 @@
             </div>
           </div>
 
+          <!-- Package switcher -->
+          <div class="mt-5">
+            <div class="text-[10px] font-bold text-gray-700 uppercase tracking-widest mb-2">Выберите пакет</div>
+            <div class="grid grid-cols-3 gap-1.5">
+              <button onclick="setPackage('starter')" id="pkg-starter" class="py-2 px-1 rounded-xl border-2 text-center transition-all">
+                <div class="text-[9px] font-bold uppercase tracking-wider">Starter</div>
+                <div class="text-xs font-bold mt-0.5 tabular">150К</div>
+              </button>
+              <button onclick="setPackage('smart')" id="pkg-smart" class="py-2 px-1 rounded-xl border-2 text-center transition-all relative">
+                <div class="absolute -top-1.5 left-1/2 -translate-x-1/2 text-[7px] px-1.5 py-0.5 rounded-full bg-rose-500 text-white font-bold uppercase tracking-wider">База</div>
+                <div class="text-[9px] font-bold uppercase tracking-wider">Smart</div>
+                <div class="text-xs font-bold mt-0.5 tabular">175К</div>
+              </button>
+              <button onclick="setPackage('pro')" id="pkg-pro" class="py-2 px-1 rounded-xl border-2 text-center transition-all">
+                <div class="text-[9px] font-bold uppercase tracking-wider">Pro</div>
+                <div class="text-xs font-bold mt-0.5 tabular">225К</div>
+              </button>
+            </div>
+          </div>
+
           <!-- Pilot cost -->
-          <div class="mt-5 p-4 rounded-2xl bg-gray-900 text-white">
-            <div class="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Pilot инвестиция</div>
+          <div class="mt-3 p-4 rounded-2xl bg-gray-900 text-white">
+            <div class="text-[10px] uppercase tracking-widest text-gray-400 font-bold" id="pkg-label">Smart · Pilot инвестиция</div>
             <div class="mt-1.5 flex items-baseline gap-2">
-              <div class="text-2xl font-bold tabular">294 000 ₽</div>
+              <div class="text-2xl font-bold tabular" id="pkg-year1">331 000 ₽</div>
               <div class="text-[10px] text-gray-400">за 1-й год</div>
             </div>
-            <div class="text-[10px] text-gray-400 mt-0.5">150К единоразово + 12К/мес</div>
+            <div class="text-[10px] text-gray-400 mt-0.5" id="pkg-breakdown">175К единоразово + 13К/мес</div>
           </div>
 
           <div class="mt-4 text-center text-[10px] text-gray-500 italic leading-relaxed px-2">
-            Реалистичный сценарий — base case при типичных wellness-апселлах в РФ. Все цифры пересчитываются вживую при изменении ввода.
+            Сценарии меняются при выборе пакета. STARTER — простая персонализация, SMART — правила-модификаторы, PRO — AI-конструктор из каталога.
           </div>
 
           <div class="text-center mt-4 text-[10px] text-gray-400">
             Open ROI Calculator
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ────── SCREEN 9: Master Dashboard preview ────── -->
+    <div class="phone">
+      <div class="screen bg-gray-50">
+        <div class="px-5 pt-5">
+          <!-- Header -->
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Для мастера</div>
+              <div class="text-base font-bold text-gray-900 mt-0.5">Aquatonus · Master</div>
+            </div>
+            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-white text-sm font-bold">
+              О
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <h2 class="text-2xl font-bold text-gray-900 leading-tight">Сегодня</h2>
+            <p class="text-xs text-gray-500 mt-1">16 мая · среда</p>
+          </div>
+
+          <!-- Today metrics row -->
+          <div class="mt-4 grid grid-cols-3 gap-2">
+            <div class="p-2.5 rounded-xl bg-white border border-gray-100">
+              <div class="text-[9px] text-gray-500 uppercase tracking-wider font-semibold">Курс</div>
+              <div class="text-lg font-bold text-gray-900 tabular mt-0.5">32</div>
+              <div class="text-[9px] text-gray-500">клиентки</div>
+            </div>
+            <div class="p-2.5 rounded-xl bg-white border border-gray-100">
+              <div class="text-[9px] text-gray-500 uppercase tracking-wider font-semibold">Алерты</div>
+              <div class="text-lg font-bold text-rose-600 tabular mt-0.5">3</div>
+              <div class="text-[9px] text-gray-500">внимание</div>
+            </div>
+            <div class="p-2.5 rounded-xl bg-white border border-gray-100">
+              <div class="text-[9px] text-gray-500 uppercase tracking-wider font-semibold">На одобр.</div>
+              <div class="text-lg font-bold text-blue-600 tabular mt-0.5">2</div>
+              <div class="text-[9px] text-gray-500">draft</div>
+            </div>
+          </div>
+
+          <!-- Alerts -->
+          <div class="mt-5">
+            <div class="text-[10px] font-bold text-gray-700 uppercase tracking-wider mb-2">Требует внимания</div>
+            <div class="space-y-2">
+              <!-- Alert 1 -->
+              <div class="p-3 rounded-xl bg-rose-50 border border-rose-100 flex gap-3">
+                <div class="w-1 rounded-full bg-rose-500 shrink-0"></div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between gap-2">
+                    <div class="text-sm font-semibold text-gray-900 truncate">Анна К.</div>
+                    <div class="text-[10px] text-rose-700 font-bold whitespace-nowrap">High risk</div>
+                  </div>
+                  <div class="text-[11px] text-gray-600 mt-0.5">Пропустила 2 занятия подряд · неделя 4</div>
+                  <button class="mt-1.5 text-[11px] text-rose-600 font-semibold">Позвонить →</button>
+                </div>
+              </div>
+              <!-- Alert 2 -->
+              <div class="p-3 rounded-xl bg-amber-50 border border-amber-100 flex gap-3">
+                <div class="w-1 rounded-full bg-amber-500 shrink-0"></div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between gap-2">
+                    <div class="text-sm font-semibold text-gray-900 truncate">Мария Р.</div>
+                    <div class="text-[10px] text-amber-700 font-bold whitespace-nowrap">Апселл момент</div>
+                  </div>
+                  <div class="text-[11px] text-gray-600 mt-0.5">Оптимально предложить LPG-абонемент · неделя 3</div>
+                  <button class="mt-1.5 text-[11px] text-amber-700 font-semibold">Показать акцию →</button>
+                </div>
+              </div>
+              <!-- Alert 3 -->
+              <div class="p-3 rounded-xl bg-blue-50 border border-blue-100 flex gap-3">
+                <div class="w-1 rounded-full bg-blue-500 shrink-0"></div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between gap-2">
+                    <div class="text-sm font-semibold text-gray-900 truncate">Елена С.</div>
+                    <div class="text-[10px] text-blue-700 font-bold whitespace-nowrap">Face Analyzer</div>
+                  </div>
+                  <div class="text-[11px] text-gray-600 mt-0.5">Признаки пигментации · направить к косметологу</div>
+                  <button class="mt-1.5 text-[11px] text-blue-700 font-semibold">Запись →</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Draft plans -->
+          <div class="mt-5">
+            <div class="text-[10px] font-bold text-gray-700 uppercase tracking-wider mb-2">Новые планы на одобрение</div>
+            <div class="p-3 rounded-xl bg-white border border-gray-200">
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="text-sm font-semibold text-gray-900">Ольга М. · 38 лет</div>
+                  <div class="text-[11px] text-gray-500 mt-0.5">Шаблон: Экспресс 4 нед · бюджет 18К</div>
+                </div>
+                <div class="text-[10px] px-2 py-1 rounded-full bg-green-100 text-green-700 font-bold">
+                  87%
+                </div>
+              </div>
+              <div class="mt-2 text-[11px] text-gray-700 leading-snug">
+                Программа: 8× прессо + 6× LPG + 2 трен/нед · 1 720 ккал
+              </div>
+              <div class="mt-2.5 flex gap-2">
+                <button class="flex-1 py-2 rounded-lg bg-rose-500 text-white text-xs font-semibold">
+                  Одобрить
+                </button>
+                <button class="flex-1 py-2 rounded-lg bg-white border border-gray-200 text-gray-700 text-xs font-semibold">
+                  Изменить
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Active clients summary -->
+          <div class="mt-5 p-4 rounded-2xl bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Активные клиентки</div>
+                <div class="flex items-baseline gap-2 mt-1">
+                  <div class="text-3xl font-bold tabular">32</div>
+                  <div class="text-xs text-gray-400">/ 35</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-[10px] text-gray-400">В норме</div>
+                <div class="text-2xl font-bold text-green-400 tabular mt-0.5">28</div>
+              </div>
+            </div>
+            <div class="mt-3 h-2 rounded-full bg-gray-700 overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-green-400 to-emerald-500" style="width: 87.5%"></div>
+            </div>
+            <div class="mt-2 flex justify-between text-[10px] text-gray-400">
+              <div>87.5% в норме</div>
+              <div>4 требуют внимания</div>
+            </div>
+          </div>
+
+          <button class="w-full mt-4 py-3 rounded-2xl bg-white border border-gray-200 text-gray-900 font-semibold text-sm">
+            Все клиентки курса →
+          </button>
+
+          <div class="text-center mt-4 text-[10px] text-gray-400 italic leading-relaxed px-2">
+            Раньше мастер держал 30 клиенток в голове — теперь видит на одном экране
           </div>
         </div>
       </div>
@@ -1122,6 +1286,73 @@
       return Math.round(num).toLocaleString('ru-RU') + ' ₽';
     }
 
+    // Конфиги пакетов
+    const PACKAGES = {
+      starter: {
+        label: 'Starter · Pilot инвестиция',
+        year1: 294000,
+        breakdown: '150К единоразово + 12К/мес',
+        // STARTER: rule-based на шаблонах, скромные boost
+        boosts: {
+          conservative: { client: 0.10, return: 0.03, upsellPrice: 0.02, premium: 0.01, cosmetic: 0.03 },
+          realistic:    { client: 0.20, return: 0.07, upsellPrice: 0.06, premium: 0.03, cosmetic: 0.10 },
+          optimistic:   { client: 0.35, return: 0.13, upsellPrice: 0.13, premium: 0.07, cosmetic: 0.18 },
+        }
+      },
+      smart: {
+        label: 'Smart · Pilot инвестиция',
+        year1: 331000,
+        breakdown: '175К единоразово + 13К/мес',
+        // SMART: rule-based + modifiers + калории + расписание
+        boosts: {
+          conservative: { client: 0.13, return: 0.05, upsellPrice: 0.03, premium: 0.02, cosmetic: 0.05 },
+          realistic:    { client: 0.27, return: 0.10, upsellPrice: 0.10, premium: 0.05, cosmetic: 0.15 },
+          optimistic:   { client: 0.50, return: 0.18, upsellPrice: 0.20, premium: 0.10, cosmetic: 0.25 },
+        }
+      },
+      pro: {
+        label: 'Pro · Pilot инвестиция',
+        year1: 405000,
+        breakdown: '225К единоразово + 15К/мес',
+        // PRO: AI-конструктор + когорты + continuous learning — мощнее boost
+        boosts: {
+          conservative: { client: 0.18, return: 0.08, upsellPrice: 0.05, premium: 0.03, cosmetic: 0.08 },
+          realistic:    { client: 0.38, return: 0.15, upsellPrice: 0.15, premium: 0.07, cosmetic: 0.22 },
+          optimistic:   { client: 0.65, return: 0.25, upsellPrice: 0.30, premium: 0.15, cosmetic: 0.35 },
+        }
+      }
+    };
+
+    let currentPackage = 'smart';
+
+    function setPackage(pkg) {
+      currentPackage = pkg;
+      const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+      const config = PACKAGES[pkg];
+      setText('pkg-label', config.label);
+      setText('pkg-year1', formatRub(config.year1));
+      setText('pkg-breakdown', config.breakdown);
+
+      // Стилизация кнопок: активная — rose, остальные — grey
+      ['starter', 'smart', 'pro'].forEach(p => {
+        const btn = document.getElementById('pkg-' + p);
+        if (!btn) return;
+        if (p === pkg) {
+          btn.className = btn.className.replace(/border-[a-z-]+/g, '').replace(/bg-[a-z-]+/g, '').replace(/text-[a-z-]+/g, '').trim();
+          btn.className = btn.className.includes('relative')
+            ? 'py-2 px-1 rounded-xl border-2 text-center transition-all relative border-rose-500 bg-rose-50 text-rose-900'
+            : 'py-2 px-1 rounded-xl border-2 text-center transition-all border-rose-500 bg-rose-50 text-rose-900';
+        } else {
+          btn.className = btn.className.replace(/border-[a-z-]+/g, '').replace(/bg-[a-z-]+/g, '').replace(/text-[a-z-]+/g, '').trim();
+          btn.className = btn.className.includes('relative')
+            ? 'py-2 px-1 rounded-xl border-2 text-center transition-all relative border-gray-200 bg-white text-gray-500'
+            : 'py-2 px-1 rounded-xl border-2 text-center transition-all border-gray-200 bg-white text-gray-500';
+        }
+      });
+
+      calculateROI();
+    }
+
     function calculateROI() {
       const clients = parseFloat(document.getElementById('roi-clients').value) || 0;
       const price = parseFloat(document.getElementById('roi-price').value) || 0;
@@ -1136,39 +1367,29 @@
       const ltv = price + (returnRate * price) + (upsellRate * upsellPrice) + (premiumRate * premiumPrice);
       const currentRevenue = clients * seasons * ltv;
 
-      // Реалистичные boost-факторы (учтена работа мастера + 50% скидка)
-      // app НЕ удваивает апселлы (мастер уже это делает), а:
-      //  - расширяет линейку → +N клиенток через короткие/премиум программы
-      //  - retention →  +N процентных пунктов к % возврата
-      //  - подключает косметологию у % курсовиков (новый канал)
-      //  - персонализирует Telegram-акции → +% к цене абонемента
-      function calcScenario(level) {
-        // 0=conservative, 1=realistic, 2=optimistic
-        const clientGrowth = [0.13, 0.27, 0.50][level];
-        const returnDelta = [0.05, 0.10, 0.18][level];
-        const upsellPriceBoost = [0.03, 0.10, 0.20][level];
-        const premiumDelta = [0.02, 0.05, 0.10][level];
-        const cosmeticConv = [0.05, 0.15, 0.25][level];
+      const pkgBoosts = PACKAGES[currentPackage].boosts;
+      const pilotCost = PACKAGES[currentPackage].year1;
 
-        const newClients = clients * (1 + clientGrowth);
-        const newReturn = Math.min(returnRate + returnDelta, 0.85);
-        const newUpsellPrice = upsellPrice * (1 + upsellPriceBoost);
-        const newPremiumRate = Math.min(premiumRate + premiumDelta, 0.5);
+      function calcScenario(scenarioKey) {
+        const b = pkgBoosts[scenarioKey];
+        const newClients = clients * (1 + b.client);
+        const newReturn = Math.min(returnRate + b.return, 0.85);
+        const newUpsellPrice = upsellPrice * (1 + b.upsellPrice);
+        const newPremiumRate = Math.min(premiumRate + b.premium, 0.5);
 
         const newLtv = price
           + (newReturn * price)
           + (upsellRate * newUpsellPrice)
           + (newPremiumRate * premiumPrice)
-          + (cosmeticConv * cosmeticPrice);
+          + (b.cosmetic * cosmeticPrice);
 
         const newRevenue = newClients * seasons * newLtv;
         return newRevenue - currentRevenue;
       }
 
-      const conservativeProfit = calcScenario(0);
-      const realisticProfit = calcScenario(1);
-      const optimisticProfit = calcScenario(2);
-      const pilotCost = 294000;
+      const conservativeProfit = calcScenario('conservative');
+      const realisticProfit = calcScenario('realistic');
+      const optimisticProfit = calcScenario('optimistic');
 
       const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
 
@@ -1182,8 +1403,10 @@
       setText('optimistic-payback', optimisticProfit > 0 ? Math.ceil(pilotCost / (optimisticProfit / 12)) : '∞');
     }
 
-    // Initial calculation on load
-    if (document.getElementById('roi-clients')) calculateROI();
+    // Initial load — установить SMART как default
+    if (document.getElementById('roi-clients')) {
+      setPackage('smart');
+    }
   </script>
 </body>
 </html>
