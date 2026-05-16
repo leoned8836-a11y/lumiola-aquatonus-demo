@@ -953,7 +953,7 @@
               </div>
               <div>
                 <label class="text-[10px] font-bold text-gray-700 uppercase tracking-wider">Сезонов в год</label>
-                <input id="roi-seasons" type="number" value="2" min="1" max="12" class="mt-1 w-full px-2.5 py-2 rounded-xl border-2 border-gray-200 focus:border-rose-400 outline-none text-base font-bold tabular text-gray-900" oninput="calculateROI()" />
+                <input id="roi-seasons" type="number" value="4" min="1" max="12" class="mt-1 w-full px-2.5 py-2 rounded-xl border-2 border-gray-200 focus:border-rose-400 outline-none text-base font-bold tabular text-gray-900" oninput="calculateROI()" />
               </div>
             </div>
 
@@ -967,11 +967,11 @@
                   </div>
                   <div>
                     <label class="text-[10px] font-bold text-gray-600 uppercase">% покупают абонемент (через мастера)</label>
-                    <input id="roi-upsell" type="number" value="55" min="0" max="100" class="mt-0.5 w-full px-2 py-1.5 rounded-lg border border-gray-200 text-sm tabular font-semibold" oninput="calculateROI()" />
+                    <input id="roi-upsell" type="number" value="85" min="0" max="100" class="mt-0.5 w-full px-2 py-1.5 rounded-lg border border-gray-200 text-sm tabular font-semibold" oninput="calculateROI()" />
                   </div>
                   <div>
                     <label class="text-[10px] font-bold text-gray-600 uppercase">Avg цена абонемента ₽ (со скидкой 50%)</label>
-                    <input id="roi-upsell-price" type="number" value="11000" min="0" class="mt-0.5 w-full px-2 py-1.5 rounded-lg border border-gray-200 text-sm tabular font-semibold" oninput="calculateROI()" />
+                    <input id="roi-upsell-price" type="number" value="15000" min="0" class="mt-0.5 w-full px-2 py-1.5 rounded-lg border border-gray-200 text-sm tabular font-semibold" oninput="calculateROI()" />
                   </div>
                   <div>
                     <label class="text-[10px] font-bold text-gray-600 uppercase">% берёт премиум 40К</label>
@@ -979,8 +979,9 @@
                   </div>
                 </div>
                 <div class="text-[10px] text-rose-700 italic leading-snug">
-                  ⚠️ Дефолты учитывают что мастер уже драйвит апселлы (55% покупают
-                  абонемент со скидкой 50%). Точные цифры — после Discovery.
+                  Дефолты установлены по данным Aquatonus: 4 сезона/год по 30 чел,
+                  85% курсовиков докупают доп.процедуры со скидкой 50% на средний
+                  чек 15К.
                 </div>
               </div>
             </details>
