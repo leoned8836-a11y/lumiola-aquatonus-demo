@@ -189,6 +189,13 @@
     }
 
     /* ────── Before/After slider ────── */
+    /*
+     * Фото от Aquatonus stitched: на одной картинке слева «до», справа «после».
+     * Чтобы slider реально показывал разное: размер img = 200% ширины stage,
+     * на before-слое left:0 (видна левая половина = «до»),
+     * на after-слое left:-100% (видна правая половина = «после»).
+     * Тогда clip-path на after-обёртке раскрывает «после» вместо «до».
+     */
     .ba-stage {
       position: relative;
       width: 100%;
@@ -202,9 +209,38 @@
       cursor: ew-resize;
       user-select: none;
     }
-    .ba-image-wrap { position: absolute; inset: 0; overflow: hidden; }
-    .ba-image-wrap img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
-    .ba-after { clip-path: inset(0 0 0 50%); transition: clip-path .15s ease-out; }
+    .ba-image-wrap {
+      position: absolute; inset: 0;
+      overflow: hidden;
+    }
+    .ba-image-wrap img {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 200%;
+      max-width: none;
+      object-fit: cover;
+      object-position: left center;
+      pointer-events: none;
+      transition: opacity .35s;
+    }
+    .ba-before img { left: 0; }      /* показывает левую половину stitched-фото = «до» */
+    .ba-after img  { left: -100%; }  /* показывает правую половину stitched-фото = «после» */
+    .ba-after { clip-path: inset(0 0 0 50%); transition: clip-path .12s ease-out; }
+    .ba-loading img { opacity: 0.3; }
+    .ba-spinner {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 36px; height: 36px;
+      border: 3px solid rgba(0,0,0,0.1);
+      border-top-color: var(--burgundy-700);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      opacity: 0;
+      transition: opacity .3s;
+      pointer-events: none;
+    }
+    .ba-loading .ba-spinner { opacity: 1; }
+    @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
     .ba-handle {
       position: absolute; top: 0; bottom: 0;
       width: 3px;
@@ -638,17 +674,21 @@
     <div class="reveal">
       <!-- Slider stage -->
       <div class="ba-stage" id="baStage">
-        <div class="ba-image-wrap">
-          <img id="baImgBefore" src="" alt="Клиентка до курса" loading="lazy" />
+        <div class="ba-image-wrap ba-before">
+          <img id="baImgBefore" src="" alt="Клиентка до курса" loading="lazy" decoding="async" />
         </div>
         <div class="ba-image-wrap ba-after" id="baImgAfterWrap">
-          <img id="baImgAfter" src="" alt="Клиентка после курса" loading="lazy" />
+          <img id="baImgAfter" src="" alt="Клиентка после курса" loading="lazy" decoding="async" />
         </div>
+        <div class="ba-spinner"></div>
         <div class="ba-label ba-label-before">до</div>
         <div class="ba-label ba-label-after">после</div>
         <div class="ba-handle" id="baHandle">
           <div class="ba-handle-pill">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--burgundy-700);"><polyline points="15 18 9 12 15 6"/><polyline points="9 18 3 12 9 6" opacity="0"/><polyline points="9 18 15 12 9 6" transform="translate(8 0)"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--burgundy-700);">
+              <polyline points="9 18 3 12 9 6"/>
+              <polyline points="15 18 21 12 15 6"/>
+            </svg>
           </div>
         </div>
       </div>
@@ -970,19 +1010,21 @@
   const words = ['клиентке', 'Анне', 'Марии', 'Юле', 'Оксане'];
   let wIdx = 0;
   const wEl = document.getElementById('rotateWord');
-  setInterval(() => {
-    wEl.style.opacity = '0';
-    wEl.style.transform = 'translateY(-8px)';
-    setTimeout(() => {
-      wIdx = (wIdx + 1) % words.length;
-      wEl.textContent = words[wIdx];
-      wEl.style.transform = 'translateY(8px)';
-      requestAnimationFrame(() => {
-        wEl.style.opacity = '1';
-        wEl.style.transform = 'translateY(0)';
-      });
-    }, 320);
-  }, 2800);
+  if (wEl) {
+    setInterval(() => {
+      wEl.style.opacity = '0';
+      wEl.style.transform = 'translateY(-8px)';
+      setTimeout(() => {
+        wIdx = (wIdx + 1) % words.length;
+        wEl.textContent = words[wIdx];
+        wEl.style.transform = 'translateY(8px)';
+        requestAnimationFrame(() => {
+          wEl.style.opacity = '1';
+          wEl.style.transform = 'translateY(0)';
+        });
+      }, 320);
+    }, 2800);
+  }
 
   // ─── Before/After slider ──────────────────────────────────────
   const cases = [
@@ -1028,12 +1070,43 @@
   const noteEl = document.getElementById('baNote');
   const dotsEl = document.getElementById('baDots');
 
-  // Photos from Aquatonus are stitched (BEFORE | AFTER in one image at ~50%).
-  // We display same image on both layers; clip-path masks afterWrap so dragging
-  // reveals the "after" half visually. Not a true split — but with stitched
-  // sources this is what works without backend.
+  /*
+   * Фото от Aquatonus stitched (BEFORE | AFTER в одном изображении).
+   * Чтобы drag реально показывал разное:
+   *   - imgBefore: width 200%, left:0  → видна ЛЕВАЯ половина (= «до»)
+   *   - imgAfter:  width 200%, left:-100% → видна ПРАВАЯ половина (= «после»)
+   * clip-path на afterWrap уменьшает «после», раскрывая «до» слева.
+   */
+  function setSliderPosition(pct) {
+    pct = Math.max(2, Math.min(98, pct));
+    handle.style.left = pct + '%';
+    afterWrap.style.clipPath = `inset(0 0 0 ${pct}%)`;
+  }
+
+  // Pre-load все фото на старте — клики next/prev мгновенные
+  const preloaded = cases.map((c) => {
+    const img = new Image();
+    img.src = c.url;
+    return img;
+  });
+
   function renderCase(idx) {
     const c = cases[idx];
+    const pre = preloaded[idx];
+
+    // Если preload ещё не закончен — показываем spinner до load
+    if (!pre.complete) {
+      stage.classList.add('ba-loading');
+      pre.addEventListener('load', () => {
+        if (caseIdx === idx) stage.classList.remove('ba-loading');
+      }, { once: true });
+      pre.addEventListener('error', () => {
+        if (caseIdx === idx) stage.classList.remove('ba-loading');
+      }, { once: true });
+    } else {
+      stage.classList.remove('ba-loading');
+    }
+
     imgBefore.src = c.url;
     imgAfter.src = c.url;
     imgBefore.alt = c.name + ' — до';
@@ -1042,21 +1115,22 @@
     statsEl.textContent = c.stats;
     noteEl.textContent = c.note;
     setSliderPosition(50);
-    // Update dots
+
+    // Update dots (перерисовываем чтобы active state обновлялся)
     dotsEl.innerHTML = '';
     cases.forEach((_, i) => {
       const d = document.createElement('div');
       d.className = 'ba-dot' + (i === idx ? ' active' : '');
       d.style.cursor = 'pointer';
-      d.addEventListener('click', () => { caseIdx = i; renderCase(i); });
+      d.setAttribute('role', 'button');
+      d.setAttribute('aria-label', 'Кейс ' + (i + 1));
+      d.addEventListener('click', () => {
+        caseIdx = i;
+        stopAuto();
+        renderCase(i);
+      });
       dotsEl.appendChild(d);
     });
-  }
-
-  function setSliderPosition(pct) {
-    pct = Math.max(2, Math.min(98, pct));
-    handle.style.left = pct + '%';
-    afterWrap.style.clipPath = `inset(0 0 0 ${pct}%)`;
   }
 
   let dragging = false;
@@ -1069,21 +1143,39 @@
     const pct = ((getX(e) - rect.left) / rect.width) * 100;
     setSliderPosition(pct);
   }
-  stage.addEventListener('mousedown', (e) => { dragging = true; move(e); });
-  stage.addEventListener('touchstart', (e) => { dragging = true; move(e); }, { passive: true });
+  stage.addEventListener('mousedown', (e) => { dragging = true; stopAuto(); move(e); });
+  stage.addEventListener('touchstart', (e) => { dragging = true; stopAuto(); move(e); }, { passive: true });
   window.addEventListener('mousemove', move);
   window.addEventListener('touchmove', move, { passive: true });
   window.addEventListener('mouseup', () => { dragging = false; });
   window.addEventListener('touchend', () => { dragging = false; });
 
-  document.getElementById('baPrev').addEventListener('click', () => {
-    caseIdx = (caseIdx - 1 + cases.length) % cases.length;
-    renderCase(caseIdx);
-  });
-  document.getElementById('baNext').addEventListener('click', () => {
+  // Кнопки next/prev — explicit binding
+  const prevBtn = document.getElementById('baPrev');
+  const nextBtn = document.getElementById('baNext');
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      caseIdx = (caseIdx - 1 + cases.length) % cases.length;
+      stopAuto();
+      renderCase(caseIdx);
+    });
+  }
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      caseIdx = (caseIdx + 1) % cases.length;
+      stopAuto();
+      renderCase(caseIdx);
+    });
+  }
+
+  // Авто-ротация каждые 8 сек, пока юзер не вмешался
+  let autoTimer = setInterval(() => {
     caseIdx = (caseIdx + 1) % cases.length;
     renderCase(caseIdx);
-  });
+  }, 8000);
+  function stopAuto() {
+    if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+  }
 
   // Init
   renderCase(0);
