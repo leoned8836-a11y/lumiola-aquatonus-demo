@@ -343,6 +343,7 @@
       <a href="#how" class="hidden md:inline text-sm font-medium transition-colors" style="color: var(--ink-secondary);">Как работает</a>
       <a href="#personalized" class="hidden md:inline text-sm font-medium transition-colors" style="color: var(--ink-secondary);">Что внутри</a>
       <a href="#results" class="hidden md:inline text-sm font-medium transition-colors" style="color: var(--ink-secondary);">Результаты</a>
+      <a href="#faq" class="hidden lg:inline text-sm font-medium transition-colors" style="color: var(--ink-secondary);">FAQ</a>
       <a href="./demo.html" class="btn-primary text-sm" style="padding: 10px 22px;">Прототип →</a>
     </div>
   </div>
@@ -475,24 +476,24 @@
       </p>
     </div>
 
-    <div class="reveal-stagger reveal grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
+    <div class="reveal-stagger reveal grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5" id="statGrid">
       <div class="card-warm p-6 md:p-7">
-        <div class="font-serif tabular leading-none mb-3" style="font-size: clamp(2.5rem, 5vw, 3.75rem); color: var(--burgundy-700); font-weight: 500;">50<span class="italic-serif text-2xl">+</span></div>
+        <div class="font-serif tabular leading-none mb-3" style="font-size: clamp(2.5rem, 5vw, 3.75rem); color: var(--burgundy-700); font-weight: 500;"><span class="counter" data-target="50">0</span><span class="italic-serif text-2xl">+</span></div>
         <div class="text-sm font-medium" style="color: var(--ink);">услуг в каталоге</div>
         <div class="text-xs mt-1" style="color: var(--ink-tertiary);">аппараты, массажи, тренировки</div>
       </div>
       <div class="card-warm p-6 md:p-7">
-        <div class="font-serif tabular leading-none mb-3" style="font-size: clamp(2.5rem, 5vw, 3.75rem); color: var(--burgundy-700); font-weight: 500;">100<span class="italic-serif text-2xl">+</span></div>
+        <div class="font-serif tabular leading-none mb-3" style="font-size: clamp(2.5rem, 5vw, 3.75rem); color: var(--burgundy-700); font-weight: 500;"><span class="counter" data-target="100">0</span><span class="italic-serif text-2xl">+</span></div>
         <div class="text-sm font-medium" style="color: var(--ink);">клиенток в год</div>
         <div class="text-xs mt-1" style="color: var(--ink-tertiary);">через «Перезагрузку»</div>
       </div>
       <div class="card-warm p-6 md:p-7">
-        <div class="font-serif tabular leading-none mb-3" style="font-size: clamp(2.5rem, 5vw, 3.75rem); color: var(--burgundy-700); font-weight: 500;">4</div>
+        <div class="font-serif tabular leading-none mb-3" style="font-size: clamp(2.5rem, 5vw, 3.75rem); color: var(--burgundy-700); font-weight: 500;"><span class="counter" data-target="4">0</span></div>
         <div class="text-sm font-medium" style="color: var(--ink);">сезона в год</div>
         <div class="text-xs mt-1" style="color: var(--ink-tertiary);">по 8 недель каждый</div>
       </div>
       <div class="card-warm p-6 md:p-7">
-        <div class="font-serif tabular leading-none mb-3" style="font-size: clamp(2.5rem, 5vw, 3.75rem); color: var(--burgundy-700); font-weight: 500;">1</div>
+        <div class="font-serif tabular leading-none mb-3" style="font-size: clamp(2.5rem, 5vw, 3.75rem); color: var(--burgundy-700); font-weight: 500;"><span class="counter" data-target="1">0</span></div>
         <div class="text-sm font-medium" style="color: var(--ink);">публичный курс</div>
         <div class="text-xs mt-1" style="color: var(--ink-tertiary);">на 100+ разных клиенток</div>
       </div>
@@ -919,6 +920,82 @@
 </section>
 
 <!-- ────────────────────────────────────────────────────────────── -->
+<!--  SECTION 7.5: FAQ                                               -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section id="faq" class="py-24 md:py-32">
+  <div class="max-w-3xl mx-auto px-6">
+    <div class="reveal text-center mb-14">
+      <div class="text-xs uppercase tracking-widest font-semibold mb-4" style="color: var(--burgundy-700);">Частые вопросы</div>
+      <h2 class="font-serif font-medium" style="font-size: clamp(2rem, 4.5vw, 3.25rem); color: var(--ink); letter-spacing: -0.02em; line-height: 1.05;">
+        Что обычно спрашивают <span class="italic-serif" style="color: var(--burgundy-700);">сначала</span>.
+      </h2>
+    </div>
+
+    <div class="reveal space-y-3">
+      <details class="card-warm p-0 group" style="border-radius: 18px;">
+        <summary class="px-6 py-5 cursor-pointer flex items-center justify-between gap-4 list-none">
+          <span class="font-semibold text-base" style="color: var(--ink);">Как это сочетается с YCLIENTS, который у нас уже работает?</span>
+          <svg class="chevron transition-transform group-open:rotate-180 flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--burgundy-700);"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="px-6 pb-5 text-sm leading-relaxed" style="color: var(--ink-secondary);">
+          YCLIENTS — это запись и оплата. Идеально работает, оставляем как есть. Lumiola — про другое: <strong>персонализация курса</strong> и <strong>retention-цепочка</strong>. Через YCLIENTS API подтягиваем кто записался, обновляем запись когда клиентка тапает «Записаться» в Mini App. Мастер работает в одном окне, не в двух.
+        </div>
+      </details>
+
+      <details class="card-warm p-0 group" style="border-radius: 18px;">
+        <summary class="px-6 py-5 cursor-pointer flex items-center justify-between gap-4 list-none">
+          <span class="font-semibold text-base" style="color: var(--ink);">У нас нет медицинской лицензии. Это не помешает?</span>
+          <svg class="chevron transition-transform group-open:rotate-180 flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--burgundy-700);"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="px-6 pb-5 text-sm leading-relaxed" style="color: var(--ink-secondary);">
+          Не помешает. Lumiola <strong>не ставит диагнозов</strong>, не назначает лечение, не рекомендует препараты или БАДы. Подбирает процедуры из <strong>вашего</strong> каталога по правилам которые задаёт <strong>ваш</strong> мастер. Формулировки в плане — «подходящая программа», «рассмотрите», не «вам необходимо». Это инструмент персонализации, не медицинский сервис. В коде есть техническая проверка которая блокирует медицинские формулировки.
+        </div>
+      </details>
+
+      <details class="card-warm p-0 group" style="border-radius: 18px;">
+        <summary class="px-6 py-5 cursor-pointer flex items-center justify-between gap-4 list-none">
+          <span class="font-semibold text-base" style="color: var(--ink);">Где будут храниться данные клиенток?</span>
+          <svg class="chevron transition-transform group-open:rotate-180 flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--burgundy-700);"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="px-6 pb-5 text-sm leading-relaxed" style="color: var(--ink-secondary);">
+          Все данные клиенток — на серверах в РФ (152-ФЗ). При первом входе в Mini App клиентка даёт согласие на обработку ПДн (без согласия дальше не пускает). В её профиле — две кнопки: <strong>«Посмотреть мои данные»</strong> (показывает всё что мы храним) и <strong>«Удалить аккаунт»</strong> (через двойное подтверждение, окончательное). Уведомление в Роскомнадзор беру на себя от своего ИП.
+        </div>
+      </details>
+
+      <details class="card-warm p-0 group" style="border-radius: 18px;">
+        <summary class="px-6 py-5 cursor-pointer flex items-center justify-between gap-4 list-none">
+          <span class="font-semibold text-base" style="color: var(--ink);">Если мастер уволится — как передать систему?</span>
+          <svg class="chevron transition-transform group-open:rotate-180 flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--burgundy-700);"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="px-6 pb-5 text-sm leading-relaxed" style="color: var(--ink-secondary);">
+          Все правила, шаблоны курсов, замеры клиенток, история одобрений — <strong>в системе центра</strong>, не у мастера. Новый мастер получает учётную запись, видит всё что было: историю каждой клиентки, какие правила применялись, что одобрял предыдущий мастер. Все ключевые действия (одобрено / отклонено / удалено) — в audit log.
+        </div>
+      </details>
+
+      <details class="card-warm p-0 group" style="border-radius: 18px;">
+        <summary class="px-6 py-5 cursor-pointer flex items-center justify-between gap-4 list-none">
+          <span class="font-semibold text-base" style="color: var(--ink);">Сколько времени займёт запуск?</span>
+          <svg class="chevron transition-transform group-open:rotate-180 flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--burgundy-700);"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="px-6 pb-5 text-sm leading-relaxed" style="color: var(--ink-secondary);">
+          6–8 недель от подписания до beta. <strong>Неделя 1–2:</strong> подключаюсь к YCLIENTS, загружаю каталог. <strong>Неделя 3–4:</strong> с мастером проходим её реальные правила (5–10 штук) и записываем в систему. <strong>Неделя 5–6:</strong> тесты на 2–3 клиентках добровольцах. <strong>Неделя 7–8:</strong> запуск на летнюю группу 10–15 человек. К осеннему сезону 2026 — полный запуск.
+        </div>
+      </details>
+
+      <details class="card-warm p-0 group" style="border-radius: 18px;">
+        <summary class="px-6 py-5 cursor-pointer flex items-center justify-between gap-4 list-none">
+          <span class="font-semibold text-base" style="color: var(--ink);">А что если идея не сработает? Можно ли вернуть деньги?</span>
+          <svg class="chevron transition-transform group-open:rotate-180 flex-shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--burgundy-700);"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="px-6 pb-5 text-sm leading-relaxed" style="color: var(--ink-secondary);">
+          Можно. В договоре прописана <strong>гарантия возврата 50% единоразового платежа</strong>, если за 3 месяца пилота не получим положительного ROI. Без споров и условий. Лучше закрыть пилот по-человечески, чем держать вас в проекте который не работает. Мне это тоже не интересно.
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
 <!--  SECTION 8: FINAL CTA                                           -->
 <!-- ────────────────────────────────────────────────────────────── -->
 <section id="cta" class="py-24 md:py-36 relative overflow-hidden">
@@ -1006,6 +1083,35 @@
   }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
   reveals.forEach((el) => io.observe(el));
 
+  // ─── Animated counters в секции "Проблема" ─────────────────────
+  const counters = document.querySelectorAll('.counter');
+  function animateCounter(el) {
+    const target = parseInt(el.dataset.target, 10);
+    if (isNaN(target)) return;
+    const duration = 1400; // ms
+    const startTime = performance.now();
+    function step(now) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const value = Math.round(target * eased);
+      el.textContent = value;
+      if (progress < 1) requestAnimationFrame(step);
+      else el.textContent = target;
+    }
+    requestAnimationFrame(step);
+  }
+  const counterIO = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        animateCounter(e.target);
+        counterIO.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  counters.forEach((el) => counterIO.observe(el));
+
   // ─── Rotating word in hero ─────────────────────────────────────
   const words = ['клиентке', 'Анне', 'Марии', 'Юле', 'Оксане'];
   let wIdx = 0;
@@ -1027,36 +1133,37 @@
   }
 
   // ─── Before/After slider ──────────────────────────────────────
+  // Фото self-hosted в repo — гарантированно загружаются и быстро
   const cases = [
     {
       name: 'Балаева Надежда',
       stats: '−20.5 кг   ·   −52 см   ·   2.5 сезона',
       note: 'Реальная клиентка Aquatonus',
-      url: 'https://perezagruzka.vtonuse.info/wp-content/gallery/doiposle/EmGdubIxx0U.jpg',
+      url: './photos/EmGdubIxx0U.jpg',
     },
     {
       name: 'Паничкина Елена',
       stats: '−9.3 кг   ·   −28 см   ·   1.5 сезона',
       note: 'Реальная клиентка Aquatonus',
-      url: 'https://perezagruzka.vtonuse.info/wp-content/gallery/doiposle/7TbHdpuRvaQ.jpg',
+      url: './photos/7TbHdpuRvaQ.jpg',
     },
     {
       name: 'Соловьёва Ирина',
       stats: '2.1 сезона на «Перезагрузке»',
       note: 'Реальная клиентка Aquatonus',
-      url: 'https://perezagruzka.vtonuse.info/wp-content/gallery/doiposle/Ausn3XX16fg.jpg',
+      url: './photos/Ausn3XX16fg.jpg',
     },
     {
       name: 'Тюрина Надежда',
       stats: '1.7 сезона',
       note: 'Реальная клиентка Aquatonus',
-      url: 'https://perezagruzka.vtonuse.info/wp-content/gallery/doiposle/5cSGv8SrBno.jpg',
+      url: './photos/5cSGv8SrBno.jpg',
     },
     {
       name: 'Клиентка курса',
       stats: 'Перезагрузка завершена',
       note: 'Реальная клиентка Aquatonus',
-      url: 'https://perezagruzka.vtonuse.info/wp-content/gallery/doiposle/91lOcPVAOvk.jpg',
+      url: './photos/91lOcPVAOvk.jpg',
     },
   ];
   let caseIdx = 0;
