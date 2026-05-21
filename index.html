@@ -4,573 +4,1089 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lumiola — автоматизированная персонализация для Aquatonus</title>
-  <meta name="description" content="Каждой клиентке свой курс, питание и расписание. Мастер задаёт правила один раз — система применяет автоматически." />
+  <meta name="description" content="Каждой клиентке свой курс под её цель, срок, противопоказания. Мастер задаёт правила один раз — система применяет автоматически." />
+  <meta property="og:title" content="Lumiola — персонализация для Aquatonus" />
+  <meta property="og:description" content="Каждой клиентке свой курс. Мастер задаёт правила один раз — система применяет автоматически." />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Cormorant:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cormorant:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&display=swap" rel="stylesheet" />
   <style>
+    :root {
+      --burgundy-900: #5C0E1C;
+      --burgundy-800: #7A1228;
+      --burgundy-700: #9B1C2E;
+      --burgundy-50:  #FBE8EC;
+      --rose-gold:    #C9A77E;
+      --rose-gold-dark: #A88962;
+      --warm-bg:      #FAF7F2;
+      --warm-bg-deep: #F2EBE0;
+      --ink:          #1A1410;
+      --ink-secondary:#4A3F38;
+      --ink-tertiary: #8B7E73;
+      --hairline:     #EBE3D7;
+    }
     * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    html { scroll-behavior: smooth; }
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       letter-spacing: -0.011em;
-      background: #ffffff;
-      color: #0a0a0a;
+      background: var(--warm-bg);
+      color: var(--ink);
+      overflow-x: hidden;
     }
     .font-serif { font-family: 'Cormorant', Georgia, serif; letter-spacing: -0.02em; }
+    .italic-serif { font-family: 'Cormorant', Georgia, serif; font-style: italic; }
     .tabular { font-variant-numeric: tabular-nums; }
-    .gradient-text {
-      background: linear-gradient(135deg, #1c1917 0%, #44403c 50%, #f43f5e 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
+
+    /* ────── Mesh gradient hero ────── */
+    .hero-mesh {
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 0%, rgba(201, 167, 126, 0.22), transparent 70%),
+        radial-gradient(ellipse 70% 50% at 80% 30%, rgba(155, 28, 46, 0.10), transparent 70%),
+        radial-gradient(ellipse 60% 40% at 50% 100%, rgba(201, 167, 126, 0.12), transparent 70%),
+        var(--warm-bg);
     }
-    .hero-grain::before {
+    .hero-mesh::before {
       content: '';
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.04) 1px, transparent 0);
-      background-size: 24px 24px;
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(26, 20, 16, 0.04) 1px, transparent 0);
+      background-size: 28px 28px;
       pointer-events: none;
+      mask-image: linear-gradient(to bottom, black, transparent 80%);
     }
-    .pkg-card {
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* ────── Cards / hairlines ────── */
+    .card-warm {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--hairline);
+      border-radius: 24px;
+      transition: transform .4s cubic-bezier(.16,1,.3,1), box-shadow .4s cubic-bezier(.16,1,.3,1);
     }
-    .pkg-card:hover { transform: translateY(-6px); box-shadow: 0 24px 48px -16px rgba(0,0,0,0.12); }
-    .pkg-card-hero {
-      box-shadow: 0 24px 48px -12px rgba(244, 63, 94, 0.25), 0 8px 16px -8px rgba(244, 63, 94, 0.15);
+    .card-warm:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 48px -16px rgba(155, 28, 46, 0.10), 0 4px 12px -4px rgba(0,0,0,.04);
     }
-    .pkg-card-hero:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 32px 64px -16px rgba(244, 63, 94, 0.35), 0 8px 16px -8px rgba(244, 63, 94, 0.15);
+    .hairline { border-color: var(--hairline); }
+
+    /* ────── Scroll-reveal ────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 1s cubic-bezier(.16,1,.3,1), transform 1s cubic-bezier(.16,1,.3,1);
     }
-    .feature-card {
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-stagger > * { opacity: 0; transform: translateY(20px); transition: opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1); }
+    .reveal-stagger.visible > * { opacity: 1; transform: translateY(0); }
+    .reveal-stagger.visible > *:nth-child(1) { transition-delay: 0ms; }
+    .reveal-stagger.visible > *:nth-child(2) { transition-delay: 80ms; }
+    .reveal-stagger.visible > *:nth-child(3) { transition-delay: 160ms; }
+    .reveal-stagger.visible > *:nth-child(4) { transition-delay: 240ms; }
+    .reveal-stagger.visible > *:nth-child(5) { transition-delay: 320ms; }
+    .reveal-stagger.visible > *:nth-child(6) { transition-delay: 400ms; }
+    .reveal-stagger.visible > *:nth-child(7) { transition-delay: 480ms; }
+    .reveal-stagger.visible > *:nth-child(8) { transition-delay: 560ms; }
+
+    /* ────── Buttons ────── */
+    .btn-primary {
+      background: var(--burgundy-700);
+      color: white;
+      padding: 14px 28px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: -0.005em;
+      transition: all .3s cubic-bezier(.16,1,.3,1);
+      box-shadow: 0 10px 24px -8px rgba(155, 28, 46, 0.4);
     }
-    .feature-card:hover {
-      transform: translateY(-3px);
+    .btn-primary:hover {
+      background: var(--burgundy-800);
+      transform: translateY(-2px);
+      box-shadow: 0 16px 32px -8px rgba(155, 28, 46, 0.5);
+    }
+    .btn-secondary {
       background: white;
+      color: var(--ink);
+      padding: 14px 28px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 15px;
+      border: 1px solid var(--hairline);
+      transition: all .3s cubic-bezier(.16,1,.3,1);
+    }
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      border-color: var(--ink-tertiary);
       box-shadow: 0 12px 24px -8px rgba(0,0,0,0.08);
     }
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-8px); }
+
+    /* ────── Rotating word in hero ────── */
+    .rotate-word {
+      display: inline-block;
+      position: relative;
+      color: var(--burgundy-700);
     }
-    .float-anim { animation: float 6s ease-in-out infinite; }
-    .scroll-fade {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.8s, transform 0.8s;
+    .rotate-word .word {
+      display: inline-block;
+      transition: opacity .5s, transform .5s;
     }
-    .scroll-fade.visible {
-      opacity: 1;
-      transform: translateY(0);
+
+    /* ────── Phone mockup ────── */
+    .phone-frame {
+      width: 280px;
+      height: 580px;
+      background: #1A1410;
+      border-radius: 44px;
+      padding: 10px;
+      box-shadow: 0 40px 80px -20px rgba(26, 20, 16, 0.25), 0 0 0 1px rgba(0,0,0,0.06);
+      position: relative;
     }
-    .accordion-item summary { list-style: none; cursor: pointer; }
-    .accordion-item summary::-webkit-details-marker { display: none; }
-    .accordion-item summary .chevron { transition: transform 0.3s; }
-    .accordion-item[open] summary .chevron { transform: rotate(180deg); }
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: var(--warm-bg);
+      border-radius: 36px;
+      overflow: hidden;
+      position: relative;
+    }
+    .phone-notch {
+      position: absolute;
+      top: 14px; left: 50%; transform: translateX(-50%);
+      width: 100px; height: 22px;
+      background: #1A1410;
+      border-radius: 16px;
+      z-index: 10;
+    }
+
+    /* ────── Browser mockup ────── */
+    .browser-frame {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 30px 60px -20px rgba(26, 20, 16, 0.2), 0 0 0 1px rgba(0,0,0,0.04);
+      overflow: hidden;
+    }
+    .browser-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: #F8F4EE;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .browser-dot {
+      width: 12px; height: 12px; border-radius: 50%;
+    }
+    .browser-url {
+      flex: 1;
+      background: white;
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 12px;
+      color: var(--ink-tertiary);
+      margin-left: 12px;
+      font-family: monospace;
+    }
+
+    /* ────── Before/After slider ────── */
+    .ba-stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      max-width: 540px;
+      margin: 0 auto;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 30px 60px -20px rgba(26, 20, 16, 0.2);
+      background: var(--warm-bg-deep);
+      cursor: ew-resize;
+      user-select: none;
+    }
+    .ba-image-wrap { position: absolute; inset: 0; overflow: hidden; }
+    .ba-image-wrap img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+    .ba-after { clip-path: inset(0 0 0 50%); transition: clip-path .15s ease-out; }
+    .ba-handle {
+      position: absolute; top: 0; bottom: 0;
+      width: 3px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 0 12px rgba(0,0,0,0.18);
+      left: 50%; transform: translateX(-50%);
+      transition: left .15s ease-out, transform .15s ease-out;
+      pointer-events: none;
+    }
+    .ba-handle-pill {
+      position: absolute;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: white;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    }
+    .ba-label {
+      position: absolute;
+      bottom: 16px;
+      padding: 6px 12px;
+      background: rgba(26, 20, 16, 0.75);
+      color: white;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      backdrop-filter: blur(8px);
+    }
+    .ba-label-before { left: 16px; }
+    .ba-label-after { right: 16px; }
+    .ba-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--hairline);
+      transition: all .3s;
+    }
+    .ba-dot.active { background: var(--burgundy-700); width: 24px; border-radius: 6px; }
+    .ba-nav-btn {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: white;
+      border: 1px solid var(--hairline);
+      display: flex; align-items: center; justify-content: center;
+      transition: all .3s;
+    }
+    .ba-nav-btn:hover {
+      transform: scale(1.06);
+      border-color: var(--burgundy-700);
+      color: var(--burgundy-700);
+    }
+
+    /* ────── Connecting dots between how-it-works cards ────── */
+    .connector {
+      background-image: radial-gradient(circle, var(--rose-gold) 1.5px, transparent 1.5px);
+      background-size: 8px 8px;
+      background-repeat: repeat-x;
+      background-position: center;
+    }
+
+    /* ────── Float anim for hero decorations ────── */
+    @keyframes gentle-float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-12px) rotate(1deg); }
+    }
+    .float-gentle { animation: gentle-float 8s ease-in-out infinite; }
+
+    @keyframes counter-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    /* Smooth fade-in for content blocks */
+    @keyframes slow-fade-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .fade-in-slow { animation: slow-fade-in 1.5s ease-in-out both; }
   </style>
 </head>
 <body class="min-h-screen">
 
-  <!-- Top Bar -->
-  <nav class="fixed top-0 inset-x-0 z-50 backdrop-blur-xl bg-white/80 border-b border-gray-100">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center">
-          <div class="text-white text-xs font-bold">L</div>
-        </div>
-        <div class="text-base font-bold tracking-tight">Lumiola</div>
-        <div class="text-xs text-gray-400 ml-2 hidden sm:block">для Aquatonus</div>
+<!-- ────────────────────────────────────────────────────────────── -->
+<!--  NAV                                                            -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<nav id="top-nav" class="fixed top-0 inset-x-0 z-50 transition-all duration-500" style="background: rgba(250, 247, 242, 0.6); backdrop-filter: blur(20px); border-bottom: 1px solid transparent;">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="#hero" class="flex items-center gap-2.5 group">
+      <div class="w-8 h-8 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, var(--burgundy-700), var(--burgundy-900));">
+        <span class="text-white font-bold text-sm italic-serif">L</span>
       </div>
-      <div class="flex items-center gap-3">
-        <a href="#packages" class="text-sm text-gray-600 hover:text-gray-900 hidden md:inline">Пакеты</a>
-        <a href="#how" class="text-sm text-gray-600 hover:text-gray-900 hidden md:inline">Как работает</a>
-        <a href="#faq" class="text-sm text-gray-600 hover:text-gray-900 hidden md:inline">FAQ</a>
-        <a href="./demo.html" class="text-sm font-semibold px-4 py-2 rounded-full bg-gray-900 text-white hover:bg-gray-800 transition">
-          Прототип →
-        </a>
+      <div class="flex items-baseline gap-2">
+        <span class="text-base font-bold tracking-tight" style="color: var(--ink);">Lumiola</span>
+        <span class="text-xs hidden sm:inline" style="color: var(--ink-tertiary);">для Aquatonus</span>
+      </div>
+    </a>
+    <div class="flex items-center gap-1 sm:gap-5">
+      <a href="#how" class="hidden md:inline text-sm font-medium transition-colors" style="color: var(--ink-secondary);">Как работает</a>
+      <a href="#personalized" class="hidden md:inline text-sm font-medium transition-colors" style="color: var(--ink-secondary);">Что внутри</a>
+      <a href="#results" class="hidden md:inline text-sm font-medium transition-colors" style="color: var(--ink-secondary);">Результаты</a>
+      <a href="./demo.html" class="btn-primary text-sm" style="padding: 10px 22px;">Прототип →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!--  SECTION 1: HERO                                                -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section id="hero" class="relative hero-mesh pt-32 pb-24 md:pt-40 md:pb-32 overflow-hidden">
+  <div class="max-w-6xl mx-auto px-6 relative z-10">
+    <div class="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+      <!-- Left: text -->
+      <div class="lg:col-span-7 fade-in-slow">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-7" style="background: rgba(255,255,255,0.7); border: 1px solid var(--hairline);">
+          <span class="w-1.5 h-1.5 rounded-full" style="background: var(--burgundy-700);"></span>
+          <span class="text-xs font-semibold tracking-wide uppercase" style="color: var(--ink-secondary);">Прототип под Aquatonus</span>
+        </div>
+        <h1 class="font-serif font-medium leading-[0.95] mb-7" style="font-size: clamp(2.5rem, 6vw, 4.75rem); color: var(--ink); letter-spacing: -0.025em;">
+          Каждой
+          <span class="italic-serif" style="color: var(--burgundy-700);">
+            <span class="rotate-word"><span class="word" id="rotateWord">клиентке</span></span>
+          </span>
+          <br>свой курс,<br>не один на всех.
+        </h1>
+        <p class="text-lg md:text-xl leading-relaxed mb-10 max-w-xl" style="color: var(--ink-secondary);">
+          Мастер задаёт правила <span class="italic-serif" style="color: var(--burgundy-700);">один раз</span> —
+          система собирает программу под каждую клиентку.
+          Учитывает цель, противопоказания, замеры, статус оплаты.
+        </p>
+        <div class="flex flex-wrap items-center gap-3">
+          <a href="./demo.html" class="btn-primary">
+            Посмотреть прототип
+          </a>
+          <a href="#results" class="btn-secondary">
+            Реальные результаты ↓
+          </a>
+        </div>
+        <div class="mt-12 flex items-center gap-8 flex-wrap">
+          <div>
+            <div class="text-xs uppercase tracking-wider font-semibold mb-1" style="color: var(--ink-tertiary);">Готово к</div>
+            <div class="text-base font-medium" style="color: var(--ink);">Осеннему сезону 2026</div>
+          </div>
+          <div class="hidden sm:block w-px h-10" style="background: var(--hairline);"></div>
+          <div>
+            <div class="text-xs uppercase tracking-wider font-semibold mb-1" style="color: var(--ink-tertiary);">Под</div>
+            <div class="text-base font-medium" style="color: var(--ink);">«Перезагрузку» Aquatonus</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: mockup card -->
+      <div class="lg:col-span-5 relative">
+        <div class="card-warm p-6 relative float-gentle" style="border-radius: 28px;">
+          <div class="flex items-center gap-2 mb-5">
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center" style="background: var(--burgundy-50);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--burgundy-700);"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2"/></svg>
+            </div>
+            <div>
+              <div class="text-sm font-semibold">AI собирает курс</div>
+              <div class="text-xs" style="color: var(--ink-tertiary);">для Анны, 32 года</div>
+            </div>
+            <span class="ml-auto text-xs px-2 py-1 rounded-full font-semibold tabular" style="background: rgba(46, 125, 50, 0.1); color: #2e7d32;">87%</span>
+          </div>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between p-2.5 rounded-xl" style="background: rgba(255,255,255,0.5);">
+              <span class="text-sm font-medium">LPG-массаж</span>
+              <span class="text-xs tabular" style="color: var(--ink-tertiary);">×4 (было 8)</span>
+            </div>
+            <div class="flex items-center justify-between p-2.5 rounded-xl" style="background: rgba(255,255,255,0.5);">
+              <span class="text-sm font-medium">Прессотерапия</span>
+              <span class="text-xs tabular" style="color: var(--ink-tertiary);">×8</span>
+            </div>
+            <div class="flex items-center justify-between p-2.5 rounded-xl" style="background: rgba(255,255,255,0.5);">
+              <span class="text-sm font-medium">VelaShape ANCHOR</span>
+              <span class="text-xs tabular" style="color: var(--ink-tertiary);">×4</span>
+            </div>
+            <div class="flex items-center justify-between p-2.5 rounded-xl" style="background: rgba(255,255,255,0.5);">
+              <span class="text-sm font-medium" style="color: var(--ink-tertiary);">SMART-тренировка</span>
+              <span class="text-xs tabular" style="color: var(--ink-tertiary);">×8</span>
+            </div>
+          </div>
+          <div class="mt-5 pt-5 border-t hairline border-t">
+            <div class="flex items-baseline justify-between mb-1">
+              <span class="text-xs uppercase tracking-wider font-semibold" style="color: var(--ink-tertiary);">Подобрано</span>
+              <span class="text-2xl font-bold tabular" style="color: var(--burgundy-700);">17 800 ₽</span>
+            </div>
+            <div class="flex items-baseline justify-between">
+              <span class="text-xs" style="color: var(--ink-tertiary);">базовая цена</span>
+              <span class="text-sm tabular line-through" style="color: var(--ink-tertiary);">44 800 ₽</span>
+            </div>
+          </div>
+          <div class="mt-4 p-3 rounded-xl flex items-start gap-2" style="background: rgba(201, 167, 126, 0.12);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--rose-gold-dark); margin-top: 2px;"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2"/></svg>
+            <div class="text-xs leading-relaxed" style="color: var(--ink-secondary);">
+              Применено: <strong>курсовая скидка 50%</strong> (статус active) +
+              <strong>меньше LPG</strong> (IMT 20)
+            </div>
+          </div>
+        </div>
+        <!-- Decorative dot -->
+        <div class="absolute -top-8 -right-4 w-20 h-20 rounded-full opacity-30 hidden lg:block" style="background: radial-gradient(circle, var(--rose-gold), transparent);"></div>
+        <div class="absolute -bottom-6 -left-6 w-28 h-28 rounded-full opacity-20 hidden lg:block" style="background: radial-gradient(circle, var(--burgundy-700), transparent);"></div>
       </div>
     </div>
-  </nav>
+  </div>
 
-  <!-- Hero -->
-  <section class="relative pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden hero-grain">
-    <div class="absolute inset-0 bg-gradient-to-b from-rose-50/40 via-transparent to-transparent"></div>
-    <div class="absolute top-20 -right-32 w-96 h-96 bg-gradient-to-br from-rose-200 to-pink-200 rounded-full blur-3xl opacity-30 float-anim"></div>
-    <div class="absolute bottom-0 -left-32 w-96 h-96 bg-gradient-to-br from-amber-100 to-rose-100 rounded-full blur-3xl opacity-30"></div>
+  <!-- Scroll hint -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center gap-2 opacity-50">
+    <span class="text-xs uppercase tracking-widest font-semibold" style="color: var(--ink-tertiary);">прокрутите</span>
+    <svg width="16" height="24" viewBox="0 0 16 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--ink-tertiary); animation: gentle-float 2s ease-in-out infinite;"><path d="M8 2v18M2 14l6 6 6-6"/></svg>
+  </div>
+</section>
 
-    <div class="relative max-w-6xl mx-auto px-6">
-      <!-- Eyebrow -->
-      <div class="flex items-center gap-3 mb-8">
-        <div class="text-xs font-bold uppercase tracking-widest text-rose-600">Lumiola для Aquatonus</div>
-        <div class="h-px w-12 bg-gray-300"></div>
-        <div class="text-xs text-gray-500">Пилот · Калуга · 2026</div>
-      </div>
-
-      <!-- Headline -->
-      <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[1.05] max-w-5xl">
-        <span class="gradient-text">Каждой клиентке —</span><br/>
-        <span class="font-serif italic">свой</span> курс,<br/>
-        <span class="text-gray-400">не один на всех.</span>
-      </h1>
-
-      <p class="mt-8 text-xl md:text-2xl text-gray-600 leading-relaxed max-w-2xl">
-        Автоматизированная персонализация программ Aquatonus. Мастер задаёт
-        правила один раз — система применяет ко всем клиенткам автоматически.
-      </p>
-
-      <!-- CTAs -->
-      <div class="mt-10 flex flex-wrap gap-3">
-        <a href="./demo.html" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-gray-900 text-white font-semibold hover:bg-gray-800 transition shadow-lg shadow-gray-900/20">
-          <span>Смотреть прототип</span>
-          <span class="text-rose-300">→</span>
-        </a>
-        <a href="#packages" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white border border-gray-200 text-gray-900 font-semibold hover:border-gray-300 transition">
-          3 пакета на выбор
-        </a>
-      </div>
-
-      <!-- Trust strip -->
-      <div class="mt-16 pt-8 border-t border-gray-100 grid grid-cols-2 md:grid-cols-4 gap-6">
-        <div>
-          <div class="text-3xl font-bold tabular tracking-tight">120+</div>
-          <div class="text-sm text-gray-500 mt-1">курсовиков/год Aquatonus</div>
-        </div>
-        <div>
-          <div class="text-3xl font-bold tabular tracking-tight">50+</div>
-          <div class="text-sm text-gray-500 mt-1">услуг в каталоге</div>
-        </div>
-        <div>
-          <div class="text-3xl font-bold tabular tracking-tight">10→3 мин</div>
-          <div class="text-sm text-gray-500 mt-1">мастер на план клиентки</div>
-        </div>
-        <div>
-          <div class="text-3xl font-bold tabular tracking-tight">24/7</div>
-          <div class="text-sm text-gray-500 mt-1">между визитами</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Problem -->
-  <section class="py-20 md:py-32 bg-gray-50">
-    <div class="max-w-5xl mx-auto px-6">
-      <div class="text-xs font-bold uppercase tracking-widest text-rose-600 mb-3">Что меняем</div>
-      <h2 class="text-4xl md:text-5xl font-bold tracking-tight leading-tight max-w-3xl">
-        Курсы есть, <span class="font-serif italic text-gray-500">индивидуализации</span> нет.
+<!-- ────────────────────────────────────────────────────────────── -->
+<!--  SECTION 2: PROBLEM                                             -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section id="problem" class="py-24 md:py-32 relative">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="reveal max-w-3xl mb-16">
+      <div class="text-xs uppercase tracking-widest font-semibold mb-4" style="color: var(--burgundy-700);">Контекст</div>
+      <h2 class="font-serif font-medium mb-6" style="font-size: clamp(2rem, 4.5vw, 3.5rem); color: var(--ink); letter-spacing: -0.02em; line-height: 1.05;">
+        <span class="italic-serif" style="color: var(--burgundy-700);">Один</span> публичный курс. <br>
+        Все клиентки <span class="italic-serif">разные</span>.
       </h2>
-      <p class="mt-6 text-lg md:text-xl text-gray-600 leading-relaxed max-w-3xl">
-        Wellness 10К/8 недель, три аппаратных курса 30/60/90 дней, «Идеальный
-        старт». Структура есть, но каждая клиентка идёт по общему шаблону.
-        Мастер тратит 10 минут на консультацию вручную — для каждой одно и то же.
+      <p class="text-lg leading-relaxed" style="color: var(--ink-secondary);">
+        У Aquatonus каталог из 50+ услуг и флагман «Перезагрузка» 8 недель.
+        Мастер собирает курс под каждую клиентку <strong>словами</strong>,
+        админы каждый месяц <strong>обзванивают</strong> базу для retention.
+        Это съедает время команды и не масштабируется.
       </p>
+    </div>
 
-      <div class="mt-12 grid md:grid-cols-2 gap-5">
-        <div class="p-6 rounded-2xl bg-white border border-gray-100">
-          <div class="text-sm font-semibold text-gray-900">Между визитами клиентка одна</div>
-          <div class="text-sm text-gray-600 mt-1.5 leading-relaxed">Не помнит что делать. Пропускает занятия. Уходит после курса.</div>
-        </div>
-        <div class="p-6 rounded-2xl bg-white border border-gray-100">
-          <div class="text-sm font-semibold text-gray-900">Косметология рядом, но воронки нет</div>
-          <div class="text-sm text-gray-600 mt-1.5 leading-relaxed">Косметолог в штате, очень мало курсовиков переходят. Каждый раз ручной перевод.</div>
-        </div>
-        <div class="p-6 rounded-2xl bg-white border border-gray-100">
-          <div class="text-sm font-semibold text-gray-900">Telegram-акции — на всех одинаково</div>
-          <div class="text-sm text-gray-600 mt-1.5 leading-relaxed">Месячная акция −50% идёт broadcast. Большинству неактуально, CTR низкий.</div>
-        </div>
-        <div class="p-6 rounded-2xl bg-white border border-gray-100">
-          <div class="text-sm font-semibold text-gray-900">Админы обзванивают базу вручную</div>
-          <div class="text-sm text-gray-600 mt-1.5 leading-relaxed">Каждый день звонки, WhatsApp stories, IG stories. Гора ручной работы.</div>
-        </div>
+    <div class="reveal-stagger reveal grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
+      <div class="card-warm p-6 md:p-7">
+        <div class="font-serif tabular leading-none mb-3" style="font-size: clamp(2.5rem, 5vw, 3.75rem); color: var(--burgundy-700); font-weight: 500;">50<span class="italic-serif text-2xl">+</span></div>
+        <div class="text-sm font-medium" style="color: var(--ink);">услуг в каталоге</div>
+        <div class="text-xs mt-1" style="color: var(--ink-tertiary);">аппараты, массажи, тренировки</div>
+      </div>
+      <div class="card-warm p-6 md:p-7">
+        <div class="font-serif tabular leading-none mb-3" style="font-size: clamp(2.5rem, 5vw, 3.75rem); color: var(--burgundy-700); font-weight: 500;">100<span class="italic-serif text-2xl">+</span></div>
+        <div class="text-sm font-medium" style="color: var(--ink);">клиенток в год</div>
+        <div class="text-xs mt-1" style="color: var(--ink-tertiary);">через «Перезагрузку»</div>
+      </div>
+      <div class="card-warm p-6 md:p-7">
+        <div class="font-serif tabular leading-none mb-3" style="font-size: clamp(2.5rem, 5vw, 3.75rem); color: var(--burgundy-700); font-weight: 500;">4</div>
+        <div class="text-sm font-medium" style="color: var(--ink);">сезона в год</div>
+        <div class="text-xs mt-1" style="color: var(--ink-tertiary);">по 8 недель каждый</div>
+      </div>
+      <div class="card-warm p-6 md:p-7">
+        <div class="font-serif tabular leading-none mb-3" style="font-size: clamp(2.5rem, 5vw, 3.75rem); color: var(--burgundy-700); font-weight: 500;">1</div>
+        <div class="text-sm font-medium" style="color: var(--ink);">публичный курс</div>
+        <div class="text-xs mt-1" style="color: var(--ink-tertiary);">на 100+ разных клиенток</div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- How it works -->
-  <section id="how" class="py-20 md:py-32">
-    <div class="max-w-6xl mx-auto px-6">
-      <div class="text-center max-w-3xl mx-auto">
-        <div class="text-xs font-bold uppercase tracking-widest text-rose-600 mb-3">Как работает</div>
-        <h2 class="text-4xl md:text-5xl font-bold tracking-tight leading-tight">
-          Мастер задаёт правила <span class="font-serif italic text-rose-500">один раз</span>
-        </h2>
-        <p class="mt-5 text-lg text-gray-600 leading-relaxed">
-          Система применяет их автоматически ко всем клиенткам. Каждая получает свой план.
+<!-- ────────────────────────────────────────────────────────────── -->
+<!--  SECTION 3: HOW IT WORKS                                        -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section id="how" class="py-24 md:py-32" style="background: linear-gradient(180deg, var(--warm-bg), var(--warm-bg-deep) 50%, var(--warm-bg));">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="reveal text-center max-w-3xl mx-auto mb-20">
+      <div class="text-xs uppercase tracking-widest font-semibold mb-4" style="color: var(--burgundy-700);">Как это работает</div>
+      <h2 class="font-serif font-medium" style="font-size: clamp(2rem, 4.5vw, 3.5rem); color: var(--ink); letter-spacing: -0.02em; line-height: 1.05;">
+        Три шага. <span class="italic-serif" style="color: var(--burgundy-700);">Один раз</span> мастером — <br>
+        дальше автоматически.
+      </h2>
+    </div>
+
+    <div class="reveal grid md:grid-cols-3 gap-5 md:gap-3 relative">
+      <!-- Step 1 -->
+      <div class="card-warm p-8 relative">
+        <div class="absolute -top-3 -left-3 w-12 h-12 rounded-2xl flex items-center justify-center font-serif text-xl font-medium" style="background: var(--burgundy-700); color: white;">1</div>
+        <div class="mb-4 text-3xl">📝</div>
+        <h3 class="font-serif font-medium mb-3" style="font-size: 1.5rem; color: var(--ink); letter-spacing: -0.015em;">Мастер задаёт правила</h3>
+        <p class="text-sm leading-relaxed mb-4" style="color: var(--ink-secondary);">
+          В простом редакторе записывает 5–10 правил которые держит в голове:
+          «если варикоз — убрать прессо», «если IMT &lt; 22 — меньше LPG»,
+          «курсовицам — скидка 50%».
+        </p>
+        <div class="text-xs italic-serif" style="color: var(--rose-gold-dark);">«Один раз — потом работает с каждой»</div>
+      </div>
+
+      <!-- Connector (desktop only) -->
+      <div class="hidden md:block absolute top-1/2 left-1/3 right-2/3 h-px connector pointer-events-none"></div>
+      <div class="hidden md:block absolute top-1/2 left-2/3 right-1/3 h-px connector pointer-events-none"></div>
+
+      <!-- Step 2 -->
+      <div class="card-warm p-8 relative" style="background: rgba(155, 28, 46, 0.04);">
+        <div class="absolute -top-3 -left-3 w-12 h-12 rounded-2xl flex items-center justify-center font-serif text-xl font-medium" style="background: var(--burgundy-700); color: white;">2</div>
+        <div class="mb-4 text-3xl">⚙️</div>
+        <h3 class="font-serif font-medium mb-3" style="font-size: 1.5rem; color: var(--ink); letter-spacing: -0.015em;">AI собирает курс</h3>
+        <p class="text-sm leading-relaxed mb-4" style="color: var(--ink-secondary);">
+          За секунду по каждой клиентке: смотрит InBody, цель, противопоказания,
+          статус оплаты — применяет правила. Мастер видит готовый
+          черновик, одобряет или правит.
+        </p>
+        <div class="text-xs italic-serif" style="color: var(--rose-gold-dark);">«Цена пересчиталась с 44 800 до 17 800»</div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="card-warm p-8 relative">
+        <div class="absolute -top-3 -left-3 w-12 h-12 rounded-2xl flex items-center justify-center font-serif text-xl font-medium" style="background: var(--burgundy-700); color: white;">3</div>
+        <div class="mb-4 text-3xl">📱</div>
+        <h3 class="font-serif font-medium mb-3" style="font-size: 1.5rem; color: var(--ink); letter-spacing: -0.015em;">Клиентка получает план</h3>
+        <p class="text-sm leading-relaxed mb-4" style="color: var(--ink-secondary);">
+          В Telegram открывается приложение с её программой, расписанием,
+          прогрессом. Через месяц после курса — напоминание о новом
+          замере. Кнопка «Записаться» — звонок мастеру.
+        </p>
+        <div class="text-xs italic-serif" style="color: var(--rose-gold-dark);">«Не нужно скачивать. Открыла — увидела»</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!--  SECTION 4: WHAT'S PERSONALIZED                                -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section id="personalized" class="py-24 md:py-32">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="reveal max-w-3xl mb-16">
+      <div class="text-xs uppercase tracking-widest font-semibold mb-4" style="color: var(--burgundy-700);">Что внутри</div>
+      <h2 class="font-serif font-medium mb-5" style="font-size: clamp(2rem, 4.5vw, 3.5rem); color: var(--ink); letter-spacing: -0.02em; line-height: 1.05;">
+        Не одно «приложение для записи».
+        <span class="italic-serif" style="color: var(--burgundy-700);">Семь</span> вещей под клиентку.
+      </h2>
+      <p class="text-lg leading-relaxed" style="color: var(--ink-secondary);">
+        Каждая клиентка получает <strong>свою версию</strong> курса — состав, расписание, цена,
+        акции, напоминания. Не «вилка из трёх пакетов», а реальная персонализация.
+      </p>
+    </div>
+
+    <div class="reveal-stagger reveal grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="card-warm p-6">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style="background: var(--burgundy-50);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--burgundy-700);"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <h3 class="font-semibold mb-2" style="color: var(--ink);">Состав курса</h3>
+        <p class="text-sm leading-relaxed" style="color: var(--ink-secondary);">
+          Какие процедуры, сколько раз, какие убрать по противопоказаниям.
         </p>
       </div>
-
-      <div class="mt-16 grid md:grid-cols-3 gap-8">
-        <!-- Step 1 -->
-        <div class="relative">
-          <div class="text-7xl font-bold font-serif text-rose-100 leading-none">01</div>
-          <div class="mt-2 text-lg font-bold tracking-tight">Мастер задаёт правила</div>
-          <p class="mt-3 text-sm text-gray-600 leading-relaxed">
-            5-10 шаблонов программ. Правила сочетаемости процедур.
-            Противопоказания. Модификаторы под параметры клиентки.
-          </p>
-          <div class="mt-4 inline-flex items-center gap-1.5 text-xs text-gray-500">
-            <div class="w-1 h-1 rounded-full bg-rose-500"></div>
-            <span>15-30 часов работы один раз</span>
-          </div>
+      <div class="card-warm p-6">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style="background: var(--burgundy-50);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--burgundy-700);"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
         </div>
-
-        <!-- Step 2 -->
-        <div class="relative">
-          <div class="text-7xl font-bold font-serif text-rose-100 leading-none">02</div>
-          <div class="mt-2 text-lg font-bold tracking-tight">Lumiola собирает план</div>
-          <p class="mt-3 text-sm text-gray-600 leading-relaxed">
-            Под параметры клиентки: цель, срок, бюджет, противопоказания,
-            данные InBody и Face Analyzer. Подбор процедур, расписание,
-            расчёт калорий по lean mass.
-          </p>
-          <div class="mt-4 inline-flex items-center gap-1.5 text-xs text-gray-500">
-            <div class="w-1 h-1 rounded-full bg-rose-500"></div>
-            <span>2-3 секунды на план</span>
-          </div>
-        </div>
-
-        <!-- Step 3 -->
-        <div class="relative">
-          <div class="text-7xl font-bold font-serif text-rose-100 leading-none">03</div>
-          <div class="mt-2 text-lg font-bold tracking-tight">Мастер одобряет в Dashboard</div>
-          <p class="mt-3 text-sm text-gray-600 leading-relaxed">
-            Видит draft с confidence score. Одобряет или корректирует
-            за 2-3 минуты. После одобрения — план виден клиентке в её
-            приложении.
-          </p>
-          <div class="mt-4 inline-flex items-center gap-1.5 text-xs text-gray-500">
-            <div class="w-1 h-1 rounded-full bg-rose-500"></div>
-            <span>Раньше было 15-20 мин на ручное составление</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Features grid -->
-  <section class="py-20 md:py-32 bg-gradient-to-b from-gray-50 to-white">
-    <div class="max-w-6xl mx-auto px-6">
-      <div class="text-center max-w-3xl mx-auto">
-        <div class="text-xs font-bold uppercase tracking-widest text-rose-600 mb-3">Что персонализируется</div>
-        <h2 class="text-4xl md:text-5xl font-bold tracking-tight leading-tight">
-          7 вещей для каждой клиентки <span class="font-serif italic text-gray-400">отдельно</span>
-        </h2>
-      </div>
-
-      <div class="mt-14 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div class="feature-card p-6 rounded-2xl border border-gray-100 bg-white/50">
-          <div class="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center text-rose-600 font-bold">P</div>
-          <div class="mt-4 text-base font-bold tracking-tight">Программа процедур</div>
-          <p class="mt-1.5 text-sm text-gray-600 leading-relaxed">Подбор под цель, срок, бюджет, противопоказания</p>
-        </div>
-        <div class="feature-card p-6 rounded-2xl border border-gray-100 bg-white/50">
-          <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 font-bold">R</div>
-          <div class="mt-4 text-base font-bold tracking-tight">Расписание</div>
-          <p class="mt-1.5 text-sm text-gray-600 leading-relaxed">По дням клиентки + правилам сочетаемости процедур</p>
-        </div>
-        <div class="feature-card p-6 rounded-2xl border border-gray-100 bg-white/50">
-          <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 font-bold">N</div>
-          <div class="mt-4 text-base font-bold tracking-tight">Питание + калории</div>
-          <p class="mt-1.5 text-sm text-gray-600 leading-relaxed">Расчёт по lean mass из InBody + меню от нутрициолога</p>
-        </div>
-        <div class="feature-card p-6 rounded-2xl border border-gray-100 bg-white/50">
-          <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 font-bold">G</div>
-          <div class="mt-4 text-base font-bold tracking-tight">Промежуточные цели</div>
-          <p class="mt-1.5 text-sm text-gray-600 leading-relaxed">По её начальным замерам и прогрессу</p>
-        </div>
-        <div class="feature-card p-6 rounded-2xl border border-gray-100 bg-white/50">
-          <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 font-bold">T</div>
-          <div class="mt-4 text-base font-bold tracking-tight">Telegram-акции</div>
-          <p class="mt-1.5 text-sm text-gray-600 leading-relaxed">Только те что подходят её плану, не broadcast всем</p>
-        </div>
-        <div class="feature-card p-6 rounded-2xl border border-gray-100 bg-white/50">
-          <div class="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center text-rose-600 font-bold">U</div>
-          <div class="mt-4 text-base font-bold tracking-tight">Апселл-моменты</div>
-          <p class="mt-1.5 text-sm text-gray-600 leading-relaxed">По её прогрессу, а не всем в одну неделю</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Packages -->
-  <section id="packages" class="py-20 md:py-32">
-    <div class="max-w-6xl mx-auto px-6">
-      <div class="text-center max-w-3xl mx-auto">
-        <div class="text-xs font-bold uppercase tracking-widest text-rose-600 mb-3">Пакеты</div>
-        <h2 class="text-4xl md:text-5xl font-bold tracking-tight leading-tight">
-          3 варианта запуска
-        </h2>
-        <p class="mt-5 text-lg text-gray-600 leading-relaxed">
-          Под разный бюджет, сроки и готовность к глубине автоматизации.
-          Все три выполнимы и реалистичны.
+        <h3 class="font-semibold mb-2" style="color: var(--ink);">Расписание</h3>
+        <p class="text-sm leading-relaxed" style="color: var(--ink-secondary);">
+          Сочетаемость процедур. Не ставит массаж лица в день LPG.
         </p>
       </div>
-
-      <div class="mt-16 grid md:grid-cols-3 gap-6">
-        <!-- STARTER -->
-        <div class="pkg-card p-7 rounded-3xl bg-white border border-gray-200">
-          <div class="text-xs font-bold uppercase tracking-widest text-gray-500">Starter</div>
-          <div class="mt-3 flex items-baseline gap-1">
-            <div class="text-4xl font-bold tabular tracking-tight">150К</div>
-            <div class="text-sm text-gray-500">₽</div>
-          </div>
-          <div class="text-sm text-gray-500 mt-1">+ 12К/мес поддержка</div>
-          <div class="mt-4 pt-4 border-t border-gray-100">
-            <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Срок</div>
-            <div class="text-sm font-semibold mt-1">6-8 недель · к 1 сент 2026</div>
-          </div>
-          <ul class="mt-5 space-y-2.5 text-sm">
-            <li class="flex gap-2"><span class="text-rose-500 shrink-0">·</span><span>5-10 шаблонов от мастера</span></li>
-            <li class="flex gap-2"><span class="text-rose-500 shrink-0">·</span><span>Подбор шаблона под параметры</span></li>
-            <li class="flex gap-2"><span class="text-rose-500 shrink-0">·</span><span>Master Dashboard</span></li>
-            <li class="flex gap-2"><span class="text-rose-500 shrink-0">·</span><span>Прогресс-трекер</span></li>
-            <li class="flex gap-2"><span class="text-rose-500 shrink-0">·</span><span>Persona Telegram-акции</span></li>
-            <li class="flex gap-2"><span class="text-rose-500 shrink-0">·</span><span>Post-course retention</span></li>
-          </ul>
-          <div class="mt-6 text-xs text-gray-500">
-            От мастера: 4-8 часов на шаблоны
-          </div>
+      <div class="card-warm p-6">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style="background: var(--burgundy-50);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--burgundy-700);"><path d="M12 2v20M2 12h20"/></svg>
         </div>
-
-        <!-- SMART (HERO) -->
-        <div class="pkg-card pkg-card-hero relative p-7 rounded-3xl bg-gradient-to-br from-rose-50 to-pink-50 border-2 border-rose-400">
-          <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-rose-500 text-white text-[10px] font-bold uppercase tracking-widest">
-            Рекомендуем
-          </div>
-          <div class="text-xs font-bold uppercase tracking-widest text-rose-700">Smart</div>
-          <div class="mt-3 flex items-baseline gap-1">
-            <div class="text-4xl font-bold tabular tracking-tight text-rose-900">175К</div>
-            <div class="text-sm text-rose-700">₽</div>
-          </div>
-          <div class="text-sm text-rose-700 mt-1">+ 13К/мес поддержка</div>
-          <div class="mt-4 pt-4 border-t border-rose-200">
-            <div class="text-xs text-rose-600 uppercase tracking-wider font-semibold">Срок</div>
-            <div class="text-sm font-semibold mt-1 text-rose-900">8-10 недель · к 1 окт 2026</div>
-          </div>
-          <ul class="mt-5 space-y-2.5 text-sm text-rose-900">
-            <li class="flex gap-2"><span class="text-rose-500 shrink-0">✓</span><span class="font-medium">Всё из Starter</span></li>
-            <li class="flex gap-2"><span class="text-rose-500 shrink-0">+</span><span>Правила-модификаторы</span></li>
-            <li class="flex gap-2"><span class="text-rose-500 shrink-0">+</span><span>Калории по lean mass</span></li>
-            <li class="flex gap-2"><span class="text-rose-500 shrink-0">+</span><span>Авто-расписание процедур</span></li>
-            <li class="flex gap-2"><span class="text-rose-500 shrink-0">+</span><span>Персональное меню</span></li>
-            <li class="flex gap-2"><span class="text-rose-500 shrink-0">+</span><span>Аналитика для владельца</span></li>
-          </ul>
-          <div class="mt-6 text-xs text-rose-700">
-            От мастера: 15-30 часов на скелеты + правила
-          </div>
-        </div>
-
-        <!-- PRO -->
-        <div class="pkg-card p-7 rounded-3xl bg-gray-900 text-white">
-          <div class="text-xs font-bold uppercase tracking-widest text-gray-400">Pro</div>
-          <div class="mt-3 flex items-baseline gap-1">
-            <div class="text-4xl font-bold tabular tracking-tight">225К</div>
-            <div class="text-sm text-gray-400">₽</div>
-          </div>
-          <div class="text-sm text-gray-400 mt-1">+ 15К/мес поддержка</div>
-          <div class="mt-4 pt-4 border-t border-gray-700">
-            <div class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Срок</div>
-            <div class="text-sm font-semibold mt-1">10-14 недель · к янв-март 2027</div>
-          </div>
-          <ul class="mt-5 space-y-2.5 text-sm text-gray-200">
-            <li class="flex gap-2"><span class="text-rose-400 shrink-0">✓</span><span class="font-medium">Всё из Smart</span></li>
-            <li class="flex gap-2"><span class="text-rose-400 shrink-0">+</span><span>AI-конструктор из всех 50+ услуг</span></li>
-            <li class="flex gap-2"><span class="text-rose-400 shrink-0">+</span><span>Когортная статистика</span></li>
-            <li class="flex gap-2"><span class="text-rose-400 shrink-0">+</span><span>Continuous learning</span></li>
-            <li class="flex gap-2"><span class="text-rose-400 shrink-0">+</span><span>Face Analyzer полная интеграция</span></li>
-            <li class="flex gap-2"><span class="text-rose-400 shrink-0">+</span><span>Косметология воронка</span></li>
-          </ul>
-          <div class="mt-6 text-xs text-gray-400">
-            От мастера: 40-100 часов на формализацию
-          </div>
-        </div>
+        <h3 class="font-semibold mb-2" style="color: var(--ink);">Цена</h3>
+        <p class="text-sm leading-relaxed" style="color: var(--ink-secondary);">
+          Курсовая скидка 50% только для оплативших — мастер видит сразу.
+        </p>
       </div>
-
-      <!-- Upgrade hint -->
-      <div class="mt-10 p-5 rounded-2xl bg-rose-50/50 border border-rose-100 text-center max-w-3xl mx-auto">
-        <div class="text-sm text-rose-900">
-          <strong>Безрисковый путь:</strong> можно стартовать с STARTER и
-          апгрейдить до SMART или PRO через 3 месяца работы. Доплата только
-          разница в цене.
+      <div class="card-warm p-6">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style="background: var(--burgundy-50);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--burgundy-700);"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
         </div>
+        <h3 class="font-semibold mb-2" style="color: var(--ink);">Калории и питание</h3>
+        <p class="text-sm leading-relaxed" style="color: var(--ink-secondary);">
+          Расчёт по сухой массе из InBody — не по росту и весу.
+        </p>
+      </div>
+      <div class="card-warm p-6">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style="background: var(--burgundy-50);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--burgundy-700);"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        </div>
+        <h3 class="font-semibold mb-2" style="color: var(--ink);">Retention-сообщения</h3>
+        <p class="text-sm leading-relaxed" style="color: var(--ink-secondary);">
+          30, 60, 90 дней после курса — сама пишет, без обзвонов админами.
+        </p>
+      </div>
+      <div class="card-warm p-6">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style="background: var(--burgundy-50);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--burgundy-700);"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <h3 class="font-semibold mb-2" style="color: var(--ink);">Telegram-акции</h3>
+        <p class="text-sm leading-relaxed" style="color: var(--ink-secondary);">
+          Только что подходит её плану. Не «всё подряд», а под цель.
+        </p>
+      </div>
+      <div class="card-warm p-6">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style="background: var(--burgundy-50);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--burgundy-700);"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+        </div>
+        <h3 class="font-semibold mb-2" style="color: var(--ink);">Промежуточные цели</h3>
+        <p class="text-sm leading-relaxed" style="color: var(--ink-secondary);">
+          Мини-вехи на 2-й, 4-й, 6-й неделе — клиентка видит прогресс.
+        </p>
+      </div>
+      <div class="card-warm p-6">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style="background: var(--burgundy-50);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--burgundy-700);"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <h3 class="font-semibold mb-2" style="color: var(--ink);">Апселл моменты</h3>
+        <p class="text-sm leading-relaxed" style="color: var(--ink-secondary);">
+          Не сейчас, а когда осмысленно — на 4-й неделе LPG-абонемент.
+        </p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ROI strip -->
-  <section class="py-20 md:py-28 bg-gray-900 text-white relative overflow-hidden">
-    <div class="absolute top-0 -right-32 w-96 h-96 bg-rose-500/10 rounded-full blur-3xl"></div>
-    <div class="max-w-5xl mx-auto px-6 relative">
-      <div class="text-xs font-bold uppercase tracking-widest text-rose-400 mb-3">ROI · Year 1</div>
-      <h2 class="text-4xl md:text-5xl font-bold tracking-tight leading-tight">
-        Realistic-сценарий — <span class="font-serif italic text-rose-400">×2.2</span>
+<!-- ────────────────────────────────────────────────────────────── -->
+<!--  SECTION 5: REAL RESULTS (Before / After)                       -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section id="results" class="py-24 md:py-32" style="background: var(--warm-bg-deep);">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="reveal text-center max-w-3xl mx-auto mb-14">
+      <div class="text-xs uppercase tracking-widest font-semibold mb-4" style="color: var(--burgundy-700);">Реальные результаты</div>
+      <h2 class="font-serif font-medium mb-5" style="font-size: clamp(2rem, 4.5vw, 3.5rem); color: var(--ink); letter-spacing: -0.02em; line-height: 1.05;">
+        Не <span class="italic-serif">«до и после»</span> из стоков. <br>
+        Это <span class="italic-serif" style="color: var(--burgundy-700);">ваши</span> клиентки.
       </h2>
-      <p class="mt-5 text-lg text-gray-400 leading-relaxed max-w-2xl">
-        Прирост выручки для SMART пакета. Окупает инвестицию ~5 месяцев.
-        Точные цифры пересчитаем под вашу воронку на Discovery.
+      <p class="text-lg leading-relaxed" style="color: var(--ink-secondary);">
+        Реальные фото с perezagruzka.vtonuse.info. Когда работает то, что собирает
+        курс под клиентку — клиентки возвращаются на 2-й, 3-й сезон.
       </p>
+    </div>
 
-      <div class="mt-12 grid md:grid-cols-3 gap-4">
-        <div class="p-6 rounded-2xl bg-white/5 border border-white/10">
-          <div class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Starter</div>
-          <div class="mt-2 text-3xl font-bold tabular">+550К</div>
-          <div class="text-xs text-gray-500 mt-1">ROI 1.9× · 6 мес</div>
+    <div class="reveal">
+      <!-- Slider stage -->
+      <div class="ba-stage" id="baStage">
+        <div class="ba-image-wrap">
+          <img id="baImgBefore" src="" alt="Клиентка до курса" loading="lazy" />
         </div>
-        <div class="p-6 rounded-2xl bg-rose-500/15 border border-rose-400/30">
-          <div class="text-xs text-rose-300 uppercase tracking-wider font-semibold">Smart · база</div>
-          <div class="mt-2 text-3xl font-bold tabular">+725К</div>
-          <div class="text-xs text-rose-300 mt-1">ROI 2.2× · 5 мес</div>
+        <div class="ba-image-wrap ba-after" id="baImgAfterWrap">
+          <img id="baImgAfter" src="" alt="Клиентка после курса" loading="lazy" />
         </div>
-        <div class="p-6 rounded-2xl bg-white/5 border border-white/10">
-          <div class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Pro</div>
-          <div class="mt-2 text-3xl font-bold tabular">+1.05М</div>
-          <div class="text-xs text-gray-500 mt-1">ROI 2.6× · 4 мес</div>
+        <div class="ba-label ba-label-before">до</div>
+        <div class="ba-label ba-label-after">после</div>
+        <div class="ba-handle" id="baHandle">
+          <div class="ba-handle-pill">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--burgundy-700);"><polyline points="15 18 9 12 15 6"/><polyline points="9 18 3 12 9 6" opacity="0"/><polyline points="9 18 15 12 9 6" transform="translate(8 0)"/></svg>
+          </div>
         </div>
       </div>
 
-      <div class="mt-10 flex flex-wrap gap-3">
-        <a href="./demo.html#calculator" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white text-gray-900 font-semibold hover:bg-gray-100 transition">
-          <span>Подставить свои цифры в ROI-калькулятор</span>
-          <span>→</span>
-        </a>
+      <!-- Caption + nav -->
+      <div class="max-w-2xl mx-auto mt-8">
+        <div class="flex items-center justify-between gap-4 mb-5">
+          <button class="ba-nav-btn" id="baPrev" aria-label="Предыдущий кейс">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div class="flex-1 text-center">
+            <div class="font-serif italic-serif text-lg" style="color: var(--burgundy-700);" id="baName">Балаева Надежда</div>
+            <div class="text-sm tabular mt-1 font-semibold" style="color: var(--ink);" id="baStats">−20.5 кг   ·   −52 см   ·   2.5 сезона</div>
+            <div class="text-xs mt-1" style="color: var(--ink-tertiary);" id="baNote">Реальная клиентка Aquatonus</div>
+          </div>
+          <button class="ba-nav-btn" id="baNext" aria-label="Следующий кейс">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+        <div class="flex justify-center gap-2" id="baDots"></div>
+        <p class="text-xs text-center mt-6" style="color: var(--ink-tertiary);">
+          ↔ Перетащите центр чтобы сравнить
+        </p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- FAQ -->
-  <section id="faq" class="py-20 md:py-32">
-    <div class="max-w-3xl mx-auto px-6">
-      <div class="text-xs font-bold uppercase tracking-widest text-rose-600 mb-3">FAQ</div>
-      <h2 class="text-4xl md:text-5xl font-bold tracking-tight leading-tight mb-12">
-        Частые вопросы
-      </h2>
+<!-- ────────────────────────────────────────────────────────────── -->
+<!--  SECTION 6: MINI APP PREVIEW                                    -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section id="miniapp" class="py-24 md:py-32">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+      <div class="reveal order-2 lg:order-1 flex justify-center">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <div class="phone-notch"></div>
+            <div class="px-5 pt-12 pb-5">
+              <div class="text-xs mt-2" style="color: var(--ink-tertiary);">Здравствуйте,</div>
+              <div class="font-serif italic-serif text-2xl mb-0.5" style="color: var(--burgundy-700);">Анна</div>
+              <div class="text-base font-semibold mb-1" style="color: var(--ink);">Wellness / Перезагрузка</div>
+              <div class="text-xs" style="color: var(--ink-tertiary);">80 дней · 17 800 ₽</div>
 
-      <div class="space-y-3">
-        <details class="accordion-item p-6 rounded-2xl bg-gray-50 border border-gray-100">
-          <summary class="flex items-center justify-between gap-4">
-            <div class="text-base font-semibold tracking-tight">Клиентки 35-55, не «технари». Не будут пользоваться приложением.</div>
-            <div class="chevron text-gray-400">▾</div>
-          </summary>
-          <div class="mt-4 text-sm text-gray-600 leading-relaxed">
-            Максимально упрощено. Вход через VK (большинство там уже).
-            Все ключевые экраны — за 30 секунд. Если клиентки не пользуются —
-            money-back guarantee 90 дней.
+              <!-- Notification card -->
+              <div class="mt-5 p-3 rounded-2xl" style="background: rgba(155, 28, 46, 0.06); border: 1px solid rgba(155, 28, 46, 0.15);">
+                <div class="flex items-start gap-2 mb-2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--burgundy-700); margin-top: 2px;"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                  <div class="text-xs font-semibold leading-tight" style="color: var(--ink);">Месяц после курса — как держится результат?</div>
+                </div>
+                <button class="text-xs px-3 py-1.5 rounded-full font-semibold" style="background: var(--burgundy-700); color: white;">Записаться к мастеру</button>
+              </div>
+
+              <!-- Progress -->
+              <div class="mt-5">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs font-semibold" style="color: var(--ink);">Прогресс курса</span>
+                  <span class="text-xs tabular" style="color: var(--ink-tertiary);">14 / 26</span>
+                </div>
+                <div class="h-1.5 rounded-full" style="background: var(--hairline);">
+                  <div class="h-full rounded-full" style="width: 54%; background: linear-gradient(90deg, var(--burgundy-700), var(--rose-gold));"></div>
+                </div>
+              </div>
+
+              <!-- Applied modifiers -->
+              <div class="mt-5">
+                <div class="flex items-center gap-1.5 mb-2">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="color: var(--rose-gold-dark);"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2"/></svg>
+                  <span class="text-xs font-semibold" style="color: var(--ink);">Подобрано лично вам</span>
+                </div>
+                <div class="space-y-1.5">
+                  <div class="text-xs px-2.5 py-2 rounded-lg flex items-start gap-1.5" style="background: rgba(201, 167, 126, 0.12); color: var(--ink-secondary);">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--rose-gold-dark); margin-top: 2px; flex-shrink: 0;"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>Курсовицы скидка 50%</span>
+                  </div>
+                  <div class="text-xs px-2.5 py-2 rounded-lg flex items-start gap-1.5" style="background: rgba(201, 167, 126, 0.12); color: var(--ink-secondary);">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--rose-gold-dark); margin-top: 2px; flex-shrink: 0;"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>Меньше LPG-массажа</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </details>
-
-        <details class="accordion-item p-6 rounded-2xl bg-gray-50 border border-gray-100">
-          <summary class="flex items-center justify-between gap-4">
-            <div class="text-base font-semibold tracking-tight">Наш мастер уже занимается апселлами. Зачем приложение?</div>
-            <div class="chevron text-gray-400">▾</div>
-          </summary>
-          <div class="mt-4 text-sm text-gray-600 leading-relaxed">
-            Не дублируем работу мастера. Lumiola делает что мастер физически
-            не может: работает 24/7, помнит 30 клиенток одновременно,
-            персонализирует Telegram-акции, запускает retention автоматически,
-            расширяет линейку. Мастер становится продуктивнее.
-          </div>
-        </details>
-
-        <details class="accordion-item p-6 rounded-2xl bg-gray-50 border border-gray-100">
-          <summary class="flex items-center justify-between gap-4">
-            <div class="text-base font-semibold tracking-tight">У нас YCLIENTS — зачем ещё одно приложение?</div>
-            <div class="chevron text-gray-400">▾</div>
-          </summary>
-          <div class="mt-4 text-sm text-gray-600 leading-relaxed">
-            YCLIENTS — запись и оплата. Lumiola работает поверх — персональный
-            план, прогресс-трекер, Dashboard для мастера, retention.
-            Это разные слои бизнеса.
-          </div>
-        </details>
-
-        <details class="accordion-item p-6 rounded-2xl bg-gray-50 border border-gray-100">
-          <summary class="flex items-center justify-between gap-4">
-            <div class="text-base font-semibold tracking-tight">Сколько у вас сейчас клиентов?</div>
-            <div class="chevron text-gray-400">▾</div>
-          </summary>
-          <div class="mt-4 text-sm text-gray-600 leading-relaxed">
-            Aquatonus — первый партнёр. Поэтому цены ниже рыночных и есть
-            эксклюзив на 6 месяцев в Калужской области. Прямо говорю — приду
-            с готовым продуктом и реалистичными ожиданиями, не со «100 кейсами».
-          </div>
-        </details>
-
-        <details class="accordion-item p-6 rounded-2xl bg-gray-50 border border-gray-100">
-          <summary class="flex items-center justify-between gap-4">
-            <div class="text-base font-semibold tracking-tight">Что если AI выдаст плохую рекомендацию?</div>
-            <div class="chevron text-gray-400">▾</div>
-          </summary>
-          <div class="mt-4 text-sm text-gray-600 leading-relaxed">
-            AI работает в рамках протоколов вашего мастера. Все рекомендации
-            проходят через Master Dashboard перед показом клиентке —
-            мастер одобряет или меняет. AI «подбирает», а не «решает».
-          </div>
-        </details>
-
-        <details class="accordion-item p-6 rounded-2xl bg-gray-50 border border-gray-100">
-          <summary class="flex items-center justify-between gap-4">
-            <div class="text-base font-semibold tracking-tight">Что если через год захотим прекратить?</div>
-            <div class="chevron text-gray-400">▾</div>
-          </summary>
-          <div class="mt-4 text-sm text-gray-600 leading-relaxed">
-            Ваше право. Приложение остаётся работать, исходный код у вас.
-            Никаких штрафов или privacy lock'ов.
-          </div>
-        </details>
-      </div>
-    </div>
-  </section>
-
-  <!-- Final CTA -->
-  <section class="py-20 md:py-32 bg-gradient-to-br from-rose-500 to-pink-600 text-white relative overflow-hidden">
-    <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
-    <div class="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
-    <div class="max-w-3xl mx-auto px-6 text-center relative">
-      <h2 class="text-4xl md:text-5xl font-bold tracking-tight leading-tight">
-        30 минут на Zoom — узнаем подходим ли друг другу.
-      </h2>
-      <p class="mt-5 text-lg text-white/80 leading-relaxed">
-        Без обязательств. Если на встрече покажется что нет смысла —
-        никаких следующих шагов.
-      </p>
-      <div class="mt-10 flex flex-wrap gap-3 justify-center">
-        <a href="./demo.html" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white text-rose-600 font-semibold hover:bg-gray-50 transition shadow-xl">
-          <span>Сначала прототип →</span>
-        </a>
-      </div>
-
-      <div class="mt-12 text-sm text-white/70">
-        Money-back guarantee · Эксклюзив 6 месяцев · Полный исходный код
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="py-10 bg-gray-50">
-    <div class="max-w-6xl mx-auto px-6 flex flex-wrap gap-6 items-center justify-between">
-      <div class="flex items-center gap-2">
-        <div class="w-6 h-6 rounded-md bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center">
-          <div class="text-white text-[10px] font-bold">L</div>
         </div>
-        <div class="text-sm font-bold tracking-tight">Lumiola</div>
-        <div class="text-xs text-gray-400">© 2026</div>
       </div>
-      <div class="text-xs text-gray-500">
-        Разработано специально для Aquatonus · Калуга
+
+      <div class="reveal order-1 lg:order-2">
+        <div class="text-xs uppercase tracking-widest font-semibold mb-4" style="color: var(--burgundy-700);">Mini App клиентки</div>
+        <h2 class="font-serif font-medium mb-6" style="font-size: clamp(2rem, 4.5vw, 3.25rem); color: var(--ink); letter-spacing: -0.02em; line-height: 1.05;">
+          Открывается из вашего Telegram-бота.
+          <span class="italic-serif" style="color: var(--burgundy-700);">Без</span> скачиваний.
+        </h2>
+        <p class="text-lg leading-relaxed mb-8" style="color: var(--ink-secondary);">
+          Анна нажимает кнопку «Lumiola» в боте Aquatonus — открывается
+          её программа. Прогресс, расписание, retention-уведомления,
+          запись на процедуры через YCLIENTS — всё в одном окне.
+        </p>
+        <ul class="space-y-3.5">
+          <li class="flex items-start gap-3">
+            <div class="w-6 h-6 rounded-lg flex items-center justify-center mt-0.5 flex-shrink-0" style="background: var(--burgundy-50);">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--burgundy-700);"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div>
+              <div class="text-base font-semibold" style="color: var(--ink);">Видит свой план, а не «как у всех»</div>
+              <div class="text-sm" style="color: var(--ink-secondary);">Блок «Подобрано лично вам» — её две правила сразу</div>
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <div class="w-6 h-6 rounded-lg flex items-center justify-center mt-0.5 flex-shrink-0" style="background: var(--burgundy-50);">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--burgundy-700);"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div>
+              <div class="text-base font-semibold" style="color: var(--ink);">Сама записывается через YCLIENTS</div>
+              <div class="text-sm" style="color: var(--ink-secondary);">Тап по уведомлению — окно записи, выбор времени, готово</div>
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <div class="w-6 h-6 rounded-lg flex items-center justify-center mt-0.5 flex-shrink-0" style="background: var(--burgundy-50);">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--burgundy-700);"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div>
+              <div class="text-base font-semibold" style="color: var(--ink);">Отмечает пройденные процедуры</div>
+              <div class="text-sm" style="color: var(--ink-secondary);">Если YCLIENTS не синхронизировался — клиентка ставит галочку</div>
+            </div>
+          </li>
+        </ul>
       </div>
     </div>
-  </footer>
+  </div>
+</section>
 
-  <script>
-    // Scroll fade-in
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('visible');
+<!-- ────────────────────────────────────────────────────────────── -->
+<!--  SECTION 7: DASHBOARD PREVIEW                                   -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section id="dashboard" class="py-24 md:py-32" style="background: var(--warm-bg-deep);">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+      <div class="reveal">
+        <div class="text-xs uppercase tracking-widest font-semibold mb-4" style="color: var(--burgundy-700);">Master Dashboard</div>
+        <h2 class="font-serif font-medium mb-6" style="font-size: clamp(2rem, 4.5vw, 3.25rem); color: var(--ink); letter-spacing: -0.02em; line-height: 1.05;">
+          Мастер работает в <span class="italic-serif" style="color: var(--burgundy-700);">одном</span> окне.
+        </h2>
+        <p class="text-lg leading-relaxed mb-8" style="color: var(--ink-secondary);">
+          Дашборд для мастера и админов. Все клиентки, статусы, черновики
+          на одобрение, метрики сезона. Без переключения между Excel,
+          бумажной картой и YCLIENTS.
+        </p>
+        <ul class="space-y-3.5">
+          <li class="flex items-start gap-3">
+            <div class="w-6 h-6 rounded-lg flex items-center justify-center mt-0.5 flex-shrink-0" style="background: var(--burgundy-50);">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--burgundy-700);"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div>
+              <div class="text-base font-semibold" style="color: var(--ink);">«Что если» — мгновенный пересчёт</div>
+              <div class="text-sm" style="color: var(--ink-secondary);">Добавил противопоказание → цена и состав обновились без записи в БД</div>
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <div class="w-6 h-6 rounded-lg flex items-center justify-center mt-0.5 flex-shrink-0" style="background: var(--burgundy-50);">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--burgundy-700);"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div>
+              <div class="text-base font-semibold" style="color: var(--ink);">InBody через скриншот</div>
+              <div class="text-sm" style="color: var(--ink-secondary);">Перетянул фото с экрана аппарата — AI вытащил 8 цифр, мастер проверил</div>
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <div class="w-6 h-6 rounded-lg flex items-center justify-center mt-0.5 flex-shrink-0" style="background: var(--burgundy-50);">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--burgundy-700);"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div>
+              <div class="text-base font-semibold" style="color: var(--ink);">Редактор правил на обычном языке</div>
+              <div class="text-sm" style="color: var(--ink-secondary);">«ЕСЛИ ИМТ меньше 22 ТО минус 4 раз LPG-массаж» — без кода</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="reveal flex justify-center">
+        <div class="browser-frame w-full max-w-md">
+          <div class="browser-bar">
+            <div class="browser-dot" style="background: #ff5f56;"></div>
+            <div class="browser-dot" style="background: #ffbd2e;"></div>
+            <div class="browser-dot" style="background: #27c93f;"></div>
+            <div class="browser-url">aquatonus.lumiola.ru</div>
+          </div>
+          <div class="p-5">
+            <!-- Metrics -->
+            <div class="grid grid-cols-3 gap-2 mb-5">
+              <div class="p-3 rounded-xl" style="background: var(--burgundy-50);">
+                <div class="text-2xl font-serif font-medium tabular" style="color: var(--burgundy-700);">32</div>
+                <div class="text-xs" style="color: var(--ink-tertiary);">активных</div>
+              </div>
+              <div class="p-3 rounded-xl" style="background: rgba(201, 167, 126, 0.18);">
+                <div class="text-2xl font-serif font-medium tabular" style="color: var(--rose-gold-dark);">2</div>
+                <div class="text-xs" style="color: var(--ink-tertiary);">на одобрение</div>
+              </div>
+              <div class="p-3 rounded-xl" style="background: rgba(46, 125, 50, 0.08);">
+                <div class="text-2xl font-serif font-medium tabular" style="color: #2e7d32;">3</div>
+                <div class="text-xs" style="color: var(--ink-tertiary);">алертов</div>
+              </div>
+            </div>
+            <!-- Drafts -->
+            <div class="mb-2">
+              <div class="text-xs font-semibold uppercase tracking-wide mb-2" style="color: var(--ink-tertiary);">На одобрении</div>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between p-3 rounded-xl border" style="border-color: var(--hairline);">
+                <div>
+                  <div class="text-sm font-semibold" style="color: var(--ink);">Анна Петрова</div>
+                  <div class="text-xs" style="color: var(--ink-tertiary);">«Перезагрузка» · 17 800 ₽</div>
+                </div>
+                <div class="text-xs px-2 py-1 rounded-md font-semibold" style="background: rgba(46, 125, 50, 0.1); color: #2e7d32;">87%</div>
+              </div>
+              <div class="flex items-center justify-between p-3 rounded-xl border" style="border-color: var(--hairline);">
+                <div>
+                  <div class="text-sm font-semibold" style="color: var(--ink);">Мария Иванова</div>
+                  <div class="text-xs" style="color: var(--ink-tertiary);">«Перезагрузка» · 22 800 ₽</div>
+                </div>
+                <div class="text-xs px-2 py-1 rounded-md font-semibold" style="background: rgba(255, 193, 7, 0.1); color: #c77800;">72%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!--  SECTION 8: FINAL CTA                                           -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section id="cta" class="py-24 md:py-36 relative overflow-hidden">
+  <div class="absolute inset-0" style="background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(155, 28, 46, 0.08), transparent 70%);"></div>
+  <div class="max-w-3xl mx-auto px-6 text-center relative reveal">
+    <div class="text-xs uppercase tracking-widest font-semibold mb-4" style="color: var(--burgundy-700);">Следующий шаг</div>
+    <h2 class="font-serif font-medium mb-6" style="font-size: clamp(2.25rem, 5vw, 4rem); color: var(--ink); letter-spacing: -0.025em; line-height: 1.02;">
+      Посмотрите вживую за <br>
+      <span class="italic-serif" style="color: var(--burgundy-700);">15 минут</span>.
+    </h2>
+    <p class="text-lg md:text-xl leading-relaxed mb-10 max-w-2xl mx-auto" style="color: var(--ink-secondary);">
+      Покажу как это работает на вашей «Перезагрузке» — InBody, программу,
+      Mini App клиентки, редактор правил. Без слайдов, без обязательств.
+    </p>
+    <div class="flex flex-wrap items-center justify-center gap-3">
+      <a href="./demo.html" class="btn-primary" style="padding: 16px 32px; font-size: 16px;">
+        Открыть прототип
+      </a>
+      <a href="#hero" class="btn-secondary">
+        Назад наверх
+      </a>
+    </div>
+    <p class="mt-8 text-sm" style="color: var(--ink-tertiary);">
+      Эксклюзив на Калугу 6 месяцев · Гарантия возврата если результата нет
+    </p>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!--  FOOTER                                                          -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<footer class="border-t pt-14 pb-10" style="border-color: var(--hairline);">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="flex flex-wrap items-end justify-between gap-8 mb-10">
+      <div>
+        <div class="flex items-center gap-2.5 mb-3">
+          <div class="w-8 h-8 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, var(--burgundy-700), var(--burgundy-900));">
+            <span class="text-white font-bold text-sm italic-serif">L</span>
+          </div>
+          <span class="text-base font-bold tracking-tight">Lumiola</span>
+        </div>
+        <p class="text-sm max-w-sm" style="color: var(--ink-tertiary);">
+          Автоматизированная персонализация для wellness-центров.
+          Все данные хранятся в России, 152-ФЗ.
+        </p>
+      </div>
+      <div class="flex items-center gap-6">
+        <a href="./demo.html" class="text-sm font-medium" style="color: var(--ink-secondary);">Прототип</a>
+        <a href="#how" class="text-sm font-medium" style="color: var(--ink-secondary);">Как работает</a>
+        <a href="#results" class="text-sm font-medium" style="color: var(--ink-secondary);">Результаты</a>
+      </div>
+    </div>
+    <div class="pt-6 border-t flex flex-wrap items-center justify-between gap-3 text-xs" style="border-color: var(--hairline); color: var(--ink-tertiary);">
+      <div>© 2026 Lumiola. Прототип под центр Aquatonus, Калуга.</div>
+      <div class="italic-serif">Made with care for women's wellness</div>
+    </div>
+  </div>
+</footer>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!--  JS                                                              -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<script>
+  // ─── Scroll-aware nav ─────────────────────────────────────────
+  const nav = document.getElementById('top-nav');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 24) {
+      nav.style.background = 'rgba(250, 247, 242, 0.85)';
+      nav.style.borderBottomColor = 'var(--hairline)';
+    } else {
+      nav.style.background = 'rgba(250, 247, 242, 0.6)';
+      nav.style.borderBottomColor = 'transparent';
+    }
+  });
+
+  // ─── Reveal on scroll ─────────────────────────────────────────
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  reveals.forEach((el) => io.observe(el));
+
+  // ─── Rotating word in hero ─────────────────────────────────────
+  const words = ['клиентке', 'Анне', 'Марии', 'Юле', 'Оксане'];
+  let wIdx = 0;
+  const wEl = document.getElementById('rotateWord');
+  setInterval(() => {
+    wEl.style.opacity = '0';
+    wEl.style.transform = 'translateY(-8px)';
+    setTimeout(() => {
+      wIdx = (wIdx + 1) % words.length;
+      wEl.textContent = words[wIdx];
+      wEl.style.transform = 'translateY(8px)';
+      requestAnimationFrame(() => {
+        wEl.style.opacity = '1';
+        wEl.style.transform = 'translateY(0)';
       });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.scroll-fade').forEach(el => observer.observe(el));
-  </script>
+    }, 320);
+  }, 2800);
+
+  // ─── Before/After slider ──────────────────────────────────────
+  const cases = [
+    {
+      name: 'Балаева Надежда',
+      stats: '−20.5 кг   ·   −52 см   ·   2.5 сезона',
+      note: 'Реальная клиентка Aquatonus',
+      url: 'https://perezagruzka.vtonuse.info/wp-content/gallery/doiposle/EmGdubIxx0U.jpg',
+    },
+    {
+      name: 'Паничкина Елена',
+      stats: '−9.3 кг   ·   −28 см   ·   1.5 сезона',
+      note: 'Реальная клиентка Aquatonus',
+      url: 'https://perezagruzka.vtonuse.info/wp-content/gallery/doiposle/7TbHdpuRvaQ.jpg',
+    },
+    {
+      name: 'Соловьёва Ирина',
+      stats: '2.1 сезона на «Перезагрузке»',
+      note: 'Реальная клиентка Aquatonus',
+      url: 'https://perezagruzka.vtonuse.info/wp-content/gallery/doiposle/Ausn3XX16fg.jpg',
+    },
+    {
+      name: 'Тюрина Надежда',
+      stats: '1.7 сезона',
+      note: 'Реальная клиентка Aquatonus',
+      url: 'https://perezagruzka.vtonuse.info/wp-content/gallery/doiposle/5cSGv8SrBno.jpg',
+    },
+    {
+      name: 'Клиентка курса',
+      stats: 'Перезагрузка завершена',
+      note: 'Реальная клиентка Aquatonus',
+      url: 'https://perezagruzka.vtonuse.info/wp-content/gallery/doiposle/91lOcPVAOvk.jpg',
+    },
+  ];
+  let caseIdx = 0;
+  const stage = document.getElementById('baStage');
+  const imgBefore = document.getElementById('baImgBefore');
+  const imgAfter = document.getElementById('baImgAfter');
+  const afterWrap = document.getElementById('baImgAfterWrap');
+  const handle = document.getElementById('baHandle');
+  const nameEl = document.getElementById('baName');
+  const statsEl = document.getElementById('baStats');
+  const noteEl = document.getElementById('baNote');
+  const dotsEl = document.getElementById('baDots');
+
+  // Photos from Aquatonus are stitched (BEFORE | AFTER in one image at ~50%).
+  // We display same image on both layers; clip-path masks afterWrap so dragging
+  // reveals the "after" half visually. Not a true split — but with stitched
+  // sources this is what works without backend.
+  function renderCase(idx) {
+    const c = cases[idx];
+    imgBefore.src = c.url;
+    imgAfter.src = c.url;
+    imgBefore.alt = c.name + ' — до';
+    imgAfter.alt = c.name + ' — после';
+    nameEl.textContent = c.name;
+    statsEl.textContent = c.stats;
+    noteEl.textContent = c.note;
+    setSliderPosition(50);
+    // Update dots
+    dotsEl.innerHTML = '';
+    cases.forEach((_, i) => {
+      const d = document.createElement('div');
+      d.className = 'ba-dot' + (i === idx ? ' active' : '');
+      d.style.cursor = 'pointer';
+      d.addEventListener('click', () => { caseIdx = i; renderCase(i); });
+      dotsEl.appendChild(d);
+    });
+  }
+
+  function setSliderPosition(pct) {
+    pct = Math.max(2, Math.min(98, pct));
+    handle.style.left = pct + '%';
+    afterWrap.style.clipPath = `inset(0 0 0 ${pct}%)`;
+  }
+
+  let dragging = false;
+  function getX(e) {
+    return (e.touches ? e.touches[0].clientX : e.clientX);
+  }
+  function move(e) {
+    if (!dragging) return;
+    const rect = stage.getBoundingClientRect();
+    const pct = ((getX(e) - rect.left) / rect.width) * 100;
+    setSliderPosition(pct);
+  }
+  stage.addEventListener('mousedown', (e) => { dragging = true; move(e); });
+  stage.addEventListener('touchstart', (e) => { dragging = true; move(e); }, { passive: true });
+  window.addEventListener('mousemove', move);
+  window.addEventListener('touchmove', move, { passive: true });
+  window.addEventListener('mouseup', () => { dragging = false; });
+  window.addEventListener('touchend', () => { dragging = false; });
+
+  document.getElementById('baPrev').addEventListener('click', () => {
+    caseIdx = (caseIdx - 1 + cases.length) % cases.length;
+    renderCase(caseIdx);
+  });
+  document.getElementById('baNext').addEventListener('click', () => {
+    caseIdx = (caseIdx + 1) % cases.length;
+    renderCase(caseIdx);
+  });
+
+  // Init
+  renderCase(0);
+</script>
 </body>
 </html>
